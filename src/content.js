@@ -28,8 +28,34 @@ export function refAtWeek(week, refTable) {
 }
 
 export function buildChartData(weeks, refTable, entries, valueKey) {
-  const byWeek = {};
-  entries.forEach(e => { byWeek[e.week] = e[valueKey]; });
+  const measured = entries
+    .filter(e => e[valueKey] != null)
+    .map(e => ({ week: e.week, value: Number(e[valueKey]) }))
+    .sort((a, b) => a.week - b.week);
+
+  // Interpoleer tussen opgeslagen metingen zodat de lijn doorloopt in plaats van
+  // losse puntjes te tonen. Buiten het bereik van de metingen blijft de lijn leeg
+  // (we verzinnen geen waarden vóór de eerste of ná de laatste meting).
+  function measuredAtWeek(w) {
+    if (measured.length === 0) return null;
+    if (w < measured[0].week || w > measured[measured.length - 1].week) return null;
+    const exact = measured.find(m => m.week === w);
+    if (exact) return exact.value;
+    let prev = measured[0];
+    let next = measured[measured.length - 1];
+    for (let i = 0; i < measured.length - 1; i++) {
+      if (measured[i].week <= w && measured[i + 1].week >= w) {
+        prev = measured[i];
+        next = measured[i + 1];
+        break;
+      }
+    }
+    if (next.week === prev.week) return prev.value;
+    const t = (w - prev.week) / (next.week - prev.week);
+    return Math.round((prev.value + (next.value - prev.value) * t) * 100) / 100;
+  }
+
+  const measuredWeeks = new Set(measured.map(m => m.week));
   const out = [];
   for (let w = 0; w <= weeks; w++) {
     const ref = refAtWeek(w, refTable);
@@ -38,7 +64,8 @@ export function buildChartData(weeks, refTable, entries, valueKey) {
       onder: Math.round(ref.low * 100) / 100,
       gemiddeld: Math.round(ref.mid * 100) / 100,
       boven: Math.round(ref.high * 100) / 100,
-      gemeten: byWeek[w] != null ? byWeek[w] : null,
+      gemeten: measuredAtWeek(w),
+      isMeetpunt: measuredWeeks.has(w),
     });
   }
   return out;

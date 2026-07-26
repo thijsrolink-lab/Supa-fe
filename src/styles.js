@@ -63,4 +63,11 @@ export const styles = {
   childTab: { flexShrink: 0, border: "1px solid #D3CEB9", background: "#E2DECB", color: "#5B6670", fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, padding: "6px 12px", borderRadius: 8, cursor: "pointer" },
   childTabActive: { background: "#2F6F62", color: "#FBF9F1", borderColor: "#2F6F62", fontWeight: 600 },
   iconBtn: { border: "1px solid #D3CEB9", background: "#FBF9F1", borderRadius: 7, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#5B6670" },
+
+  // ---- Saved measurements list ----
+  entryList: { display: "flex", flexDirection: "column", gap: 1, border: "1px solid #E3DFCB", borderRadius: 8, overflow: "hidden" },
+  entryRow: { display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: "#F7F4E9", fontSize: 13 },
+  entryWeek: { color: "#8A8368", fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, minWidth: 46, flexShrink: 0 },
+  entryVal: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#1E2A33", flex: 1 },
+  entryDel: { border: "none", background: "transparent", color: "#B0483D", cursor: "pointer", padding: 4, display: "flex", alignItems: "center", flexShrink: 0, borderRadius: 5 },
 };
