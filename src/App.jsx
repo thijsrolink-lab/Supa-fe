@@ -3,6 +3,7 @@ import { supabase } from "./supabaseClient.js";
 import Auth from "./Auth.jsx";
 import FamilySetup from "./FamilySetup.jsx";
 import Tracker from "./Tracker.jsx";
+import Jaarverslag from "./Jaarverslag.jsx";
 
 function GlobalFonts() {
   return (
@@ -40,6 +41,9 @@ function GlobalFonts() {
 
       ::selection { background: #2F6F62; color: #FBF9F1; }
 
+      @keyframes gbSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      .gb-spin { animation: gbSpin 800ms linear infinite; }
+
       @media (prefers-reduced-motion: reduce) {
         .gb-fade { animation: none; }
         .gb-tab, .gb-navbtn, .gb-stampbtn, .gb-formfield { transition: none; }
@@ -53,6 +57,7 @@ export default function App() {
   const [family, setFamily] = useState(undefined); // undefined = loading, null = none yet
   const [selectedChildId, setSelectedChildId] = useState(null);
   const [editingFamily, setEditingFamily] = useState(false);
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -113,6 +118,20 @@ export default function App() {
   ];
   const partnerName = family.mother_name || family.father_name || null;
 
+  if (showReport) {
+    return (
+      <>
+        <GlobalFonts />
+        <Jaarverslag
+          child={activeChild}
+          siblingNames={siblingNames}
+          partnerName={partnerName}
+          onBack={() => setShowReport(false)}
+        />
+      </>
+    );
+  }
+
   return (
     <>
       <GlobalFonts />
@@ -121,9 +140,11 @@ export default function App() {
         siblingNames={siblingNames}
         partnerName={partnerName}
         childOptions={children}
+        userId={session.user.id}
         onSelectChild={setSelectedChildId}
         onEditFamily={() => setEditingFamily(true)}
         onLogout={() => supabase.auth.signOut()}
+        onOpenReport={() => setShowReport(true)}
       />
     </>
   );

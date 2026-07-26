@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Square, CheckSquare, Stamp, Ruler, Weight, Plus, ChevronLeft, ChevronRight, Users, Settings, LogOut, Calendar, X } from "lucide-react";
+import { Square, CheckSquare, Stamp, Ruler, Weight, Plus, ChevronLeft, ChevronRight, Users, Settings, LogOut, Calendar, X, BookOpen } from "lucide-react";
 import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
 import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData } from "./content.js";
+import PhotoPanel from "./PhotoPanel.jsx";
 
 function weekFromBirth(birthDateStr) {
   if (!birthDateStr) return 0;
@@ -30,8 +31,9 @@ function MeetpuntDot({ cx, cy, payload, color }) {
   return <circle cx={cx} cy={cy} r={4} fill={color} stroke="#FBF9F1" strokeWidth={1.5} />;
 }
 
-export default function Tracker({ child, siblingNames, partnerName, childOptions, onSelectChild, onEditFamily, onLogout }) {
+export default function Tracker({ child, siblingNames, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, userId, onOpenReport }) {
   const [entries, setEntries] = useState([]);
+  const [photos, setPhotos] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [viewWeek, setViewWeek] = useState(0);
   const [weightInput, setWeightInput] = useState("");
@@ -53,6 +55,12 @@ export default function Tracker({ child, siblingNames, partnerName, childOptions
         .eq("child_id", child.id)
         .order("week", { ascending: true });
       if (!error && data) setEntries(data);
+      const { data: photoRows } = await supabase
+        .from("photos")
+        .select("id, week, storage_path, caption")
+        .eq("child_id", child.id)
+        .order("week", { ascending: true });
+      setPhotos(photoRows || []);
       setLoaded(true);
     })();
   }, [child.id, child.birth_date]);
@@ -120,6 +128,7 @@ export default function Tracker({ child, siblingNames, partnerName, childOptions
             </div>
           ) : <div />}
           <div style={{ display: "flex", gap: 6 }}>
+            <button className="gb-navbtn" style={styles.iconBtn} onClick={onOpenReport} aria-label="Jaarverslag"><BookOpen size={15} /></button>
             <button className="gb-navbtn" style={styles.iconBtn} onClick={onEditFamily} aria-label="Gezin bewerken"><Settings size={15} /></button>
             <button className="gb-navbtn" style={styles.iconBtn} onClick={onLogout} aria-label="Uitloggen"><LogOut size={15} /></button>
           </div>
@@ -177,6 +186,10 @@ export default function Tracker({ child, siblingNames, partnerName, childOptions
                 </li>
               ))}
             </ul>
+
+            <div style={{ marginTop: 12 }}>
+              <PhotoPanel childId={child.id} userId={userId} week={viewWeek} photos={photos} onChanged={setPhotos} />
+            </div>
 
             <div style={styles.rule} />
 

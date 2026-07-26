@@ -70,4 +70,10 @@ export const styles = {
   entryWeek: { color: "#8A8368", fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, minWidth: 46, flexShrink: 0 },
   entryVal: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#1E2A33", flex: 1 },
   entryDel: { border: "none", background: "transparent", color: "#B0483D", cursor: "pointer", padding: 4, display: "flex", alignItems: "center", flexShrink: 0, borderRadius: 5 },
+
+  // ---- Photos ----
+  photoThumbWrap: { position: "relative", width: 64, height: 64, flexShrink: 0 },
+  photoThumb: { width: 64, height: 64, objectFit: "cover", borderRadius: 8, border: "1px solid #D3CEB9", background: "#E9E5D5" },
+  photoRemoveBtn: { position: "absolute", top: -6, right: -6, width: 20, height: 20, borderRadius: "50%", border: "1px solid #D9A79F", background: "#FBF9F1", color: "#B0483D", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
+  photoUploadBtn: { display: "inline-flex", alignItems: "center", gap: 6, border: "1px dashed #B8B096", borderRadius: 7, padding: "7px 12px", fontSize: 12.5, color: "#5B6670", cursor: "pointer", fontFamily: "'IBM Plex Mono', monospace" },
 };
