@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Square, CheckSquare, Stamp, Ruler, Weight, Plus, ChevronLeft, ChevronRight, Users, Settings, LogOut, BookOpen } from "lucide-react";
+import { Square, CheckSquare, Stamp, Ruler, Weight, Plus, ChevronLeft, ChevronRight, Users, Settings, LogOut, BookOpen, Utensils, Moon, CloudRain } from "lucide-react";
 import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
-import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData, getSiblingTips } from "./content.js";
+import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData, getSiblingTips, TOPICS, getTopicTips } from "./content.js";
 import PhotoPanel from "./PhotoPanel.jsx";
+
+const TOPIC_ICONS = { eten: Utensils, slapen: Moon, huilen: CloudRain };
 
 function weekFromBirth(birthDateStr) {
   if (!birthDateStr) return 0;
@@ -39,6 +41,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
   const [weightInput, setWeightInput] = useState("");
   const [lengthInput, setLengthInput] = useState("");
   const [saveMsg, setSaveMsg] = useState("");
+  const [activeTopic, setActiveTopic] = useState(null);
 
   const currentWeek = weekFromBirth(child.birth_date);
   const countdown = daysUntilBirth(child.birth_date);
@@ -120,6 +123,35 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
             <button className="gb-navbtn" style={styles.iconBtn} onClick={onEditFamily} aria-label="Gezin bewerken"><Settings size={15} /></button>
             <button className="gb-navbtn" style={styles.iconBtn} onClick={onLogout} aria-label="Uitloggen"><LogOut size={15} /></button>
           </div>
+        </div>
+
+        <div style={styles.quickTipsBox}>
+          <div style={styles.quickTipsRow}>
+            {TOPICS.map((t) => {
+              const Icon = TOPIC_ICONS[t.id];
+              const active = activeTopic === t.id;
+              return (
+                <button
+                  key={t.id}
+                  className="gb-navbtn"
+                  style={{ ...styles.topicChip, ...(active ? styles.topicChipActive : {}) }}
+                  onClick={() => setActiveTopic(active ? null : t.id)}
+                >
+                  <Icon size={13} /> {t.label}
+                </button>
+              );
+            })}
+          </div>
+          {activeTopic && (
+            <ul style={{ ...styles.checklist, marginTop: 10 }}>
+              {getTopicTips(activeTopic, viewWeek).map((tip, i) => (
+                <li key={i} style={styles.checkItem}>
+                  {React.createElement(TOPIC_ICONS[activeTopic], { size: 13, color: "#8A5A2B", style: { flexShrink: 0, marginTop: 3 } })}
+                  <span>{renderText(tip, vars)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div style={styles.tabStrip} className="gb-tabstrip">

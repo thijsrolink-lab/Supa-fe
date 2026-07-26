@@ -70,4 +70,10 @@ export const styles = {
   photoThumb: { width: 64, height: 64, objectFit: "cover", borderRadius: 8, border: "1px solid #D3CEB9", background: "#E9E5D5" },
   photoRemoveBtn: { position: "absolute", top: -6, right: -6, width: 20, height: 20, borderRadius: "50%", border: "1px solid #D9A79F", background: "#FBF9F1", color: "#B0483D", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
   photoUploadBtn: { display: "inline-flex", alignItems: "center", gap: 6, border: "1px dashed #B8B096", borderRadius: 7, padding: "7px 12px", fontSize: 12.5, color: "#5B6670", cursor: "pointer", fontFamily: "'IBM Plex Mono', monospace" },
+
+  // ---- Quick topic tips (eten/slapen/huilen) ----
+  quickTipsBox: { background: "#FBF3E4", border: "1px solid #E3C994", borderRadius: 10, padding: "10px 12px", marginBottom: 12 },
+  quickTipsRow: { display: "flex", gap: 8, flexWrap: "wrap" },
+  topicChip: { display: "flex", alignItems: "center", gap: 6, border: "1px solid #E3C994", background: "#FBF9F1", color: "#8A5A2B", borderRadius: 20, padding: "6px 13px", fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace", cursor: "pointer" },
+  topicChipActive: { background: "#8A5A2B", color: "#FBF3E4", borderColor: "#8A5A2B", fontWeight: 600 },
 };

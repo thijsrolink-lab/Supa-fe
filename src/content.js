@@ -390,3 +390,103 @@ export function getSiblingTips(week, birthDateStr) {
   return SIBLING_TIPS[phase][category] || SIBLING_TIPS[phase].onbekend;
 }
 
+// ---------- Snel advies per onderwerp (eten/slapen/huilen), ook per babyfase ----------
+export const TOPICS = [
+  { id: "eten", label: "Eten" },
+  { id: "slapen", label: "Slapen" },
+  { id: "huilen", label: "Huilen" },
+];
+
+export const TOPIC_TIPS = {
+  newborn: {
+    eten: [
+      "Voed op vraag; in de eerste weken is dat vaak elke 2-3 uur, ook 's nachts.",
+      "Boertje laten is normaal na elke voeding — even rechtop houden en zachtjes op de rug kloppen.",
+      "Twijfel je of {kind} genoeg binnenkrijgt (natte luiers, gewicht)? Bel het consultatiebureau, zij schatten dit goed in.",
+    ],
+    slapen: [
+      "Pasgeborenen slapen 16-17 uur per dag, maar in korte blokjes van 2-4 uur.",
+      "Leg {kind} op de rug te slapen, in een leeg bedje zonder kussen/dekbed — vermindert het risico op wiegendood.",
+      "Dag en nacht zijn nog niet te onderscheiden voor {kind}; een vast ritme komt pas later.",
+    ],
+    huilen: [
+      "Huilen is nu de enige manier van communiceren; het went een beetje om de oorzaak te leren herkennen (honger, luier, moe, prikkels).",
+      "Huilt {kind} ontroostbaar door? Leg 'm veilig neer en neem zelf even afstand — beter dan gefrustreerd raken.",
+      "Aanhoudend, ongewoon huilen samen met koorts of niet drinken? Neem contact op met de huisarts of het consultatiebureau.",
+    ],
+  },
+  early: {
+    eten: [
+      "Voedingsintervallen worden vaak voorspelbaarder, maar groeispurts (rond 3 en 6 weken) geven tijdelijk extra honger.",
+      "Bij flesvoeding: check de temperatuur en houd de fles schuin zodat er geen lucht wordt meegezogen.",
+      "Spugen na de voeding is meestal onschuldig; bij overmatig spugen of gewichtsverlies, overleg met de JGZ.",
+    ],
+    slapen: [
+      "Een vast avondritueel (bad, voeding, liedje) kan nu al helpen bij het aanvoelen van 'bedtijd'.",
+      "De eerste langere nachtelijke slaapperiode ontstaat vaak in deze fase — verwacht geen vast patroon, elk kind verschilt.",
+      "Blijf {kind} op de rug leggen; draait die zich later zelf om, is dat geen probleem.",
+    ],
+    huilen: [
+      "Het 'avondhuiltje' (vaak tussen 17-23u) piekt rond 6 weken en neemt daarna vaak weer af.",
+      "Inbakeren, wit-ruisgeluid of dragen in een draagdoek kalmeert sommige baby's — probeer wat werkt voor {kind}.",
+      "Twijfel je aan darmkrampjes? Het consultatiebureau kan meedenken over voeding en houding.",
+    ],
+  },
+  mid: {
+    eten: [
+      "Rond 4-6 maanden begint de voorbereiding op bijvoeding; volg het tempo van {kind}, niet alleen de kalender.",
+      "Begin met één nieuw voedingsmiddel per keer, een paar dagen na elkaar, om reacties te herkennen.",
+      "Blijf borst- of flesvoeding als basis aanhouden naast de eerste hapjes.",
+    ],
+    slapen: [
+      "Sommige baby's laten een 'slaapregressie' zien rond 4 maanden door een veranderend slaappatroon — tijdelijk, geen zorg.",
+      "Een consistente bedtijdroutine helpt steeds meer, ook al blijft nachtvoeding nog gebruikelijk.",
+      "Een vast dutjesritme overdag maakt de nacht vaak ook rustiger.",
+    ],
+    huilen: [
+      "Huilen wordt vaker een signaal van iets specifieks (moe, honger, prikkels) — probeer patronen te herkennen.",
+      "Tandjes kunnen nu al ongemak geven; een koel bijtring kan verlichten.",
+      "Blijft {kind} veel huilen zonder duidelijke oorzaak? Bespreek dit bij het volgende consultatiebureau-bezoek.",
+    ],
+  },
+  late: {
+    eten: [
+      "De textuur van hapjes kan grover; zelf oefenen met een lepel of vingerhapjes stimuleert de motoriek.",
+      "Bekers met tuit kunnen nu geïntroduceerd worden naast fles/borst.",
+      "Blijf bekende allergenen (pinda, ei, koemelk) met mate en één voor één introduceren.",
+    ],
+    slapen: [
+      "Scheidingsangst kan de nacht beïnvloeden; een vast, voorspelbaar ritueel helpt geruststellen.",
+      "Kruipen of leren zitten kan tijdelijk voor onrustiger slapen zorgen — meestal gaat dit vanzelf over.",
+      "Houd een vaste slaapplek aan, ook op reis of bij oppas, voor herkenbaarheid.",
+    ],
+    huilen: [
+      "Vreemdelingenangst kan huilen bij onbekende mensen verklaren; forceer geen contact, geef {kind} de tijd.",
+      "Frustratiehuilen (iets niet kunnen pakken of kruipen waar die wil) hoort bij deze fase van groeiende zelfstandigheid.",
+      "Blijf zelf rustig reageren; {kind} spiegelt op deze leeftijd al jullie emotieregulatie.",
+    ],
+  },
+  toddler: {
+    eten: [
+      "Steeds meer 'gewoon' mee-eten aan tafel kan nu, in aangepaste vorm (klein gesneden, geen toegevoegd zout/suiker).",
+      "Een afnemende eetlust rond deze leeftijd is normaal; de groei vertraagt licht na het eerste half jaar.",
+      "Blijf zelf eten aanmoedigen (lepel vasthouden, met handjes), ook al is het rommelig.",
+    ],
+    slapen: [
+      "De overgang naar minder dutjes per dag (van 2 naar 1) kan rond deze leeftijd beginnen — volg het ritme van {kind}.",
+      "Los leren staan of lopen kan tijdelijk voor opgewonden, onrustiger slapen zorgen.",
+      "Het vaste avondritueel blijft de sterkste voorspeller van rustig inslapen.",
+    ],
+    huilen: [
+      "Huilen bij het achterlaten (bijv. crèche, oppas) hoort bij de leeftijd — een vast afscheidsritueel helpt vaak.",
+      "Woede-uitbarstingen door frustratie (nog niet kunnen praten) kunnen al beginnen — blijf rustig benoemen wat je ziet.",
+      "Aanhoudend ongewoon huilgedrag blijft altijd een reden om even bij het consultatiebureau te checken.",
+    ],
+  },
+};
+
+export function getTopicTips(topicId, week) {
+  const phase = siblingPhaseForWeek(week);
+  return TOPIC_TIPS[phase][topicId] || [];
+}
+
