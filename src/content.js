@@ -83,9 +83,6 @@ const STAGES = [
     "Huid-op-huidcontact helpt bij hechting en temperatuurregulatie — doe dit veel, ook als vader.",
     "Verdeel nachten in shiften met {partner} als dat kan; twee halfuitgeruste ouders redden het langer dan één uitgeputte.",
     "Bezoek beperken in de eerste week is geen onvriendelijkheid — het is ruimte nemen om te wennen.",
-  ], siblingTips: [
-    "Laat {sibling} op zijn tempo kennismaken, zonder hem te verplichten haar vast te houden.",
-    "Houd zijn eigen dagritme zoveel mogelijk hetzelfde — dat geeft houvast in een spannende week.",
   ]},
   { start: 2, end: 4, month: 1, label: "Week 2–4", facts: [
     "Herkent de stem van jou en {partner} al van tijdens de zwangerschap.",
@@ -95,9 +92,6 @@ const STAGES = [
     "Praat en zing veel, ook als er nog geen reactie lijkt te zijn — het bouwt taalherkenning op.",
     "Baken een vast rustmoment voor jezelf in, al is het 10 minuten; dit is een fase van overleven, niet van perfectie.",
     "Let bij {partner} op signalen van overbelasting of somberheid — de kraamperiode is zwaar, ook mentaal.",
-  ], siblingTips: [
-    "Plan bewust een moment alleen met {sibling}, al is het maar 15 minuten per dag.",
-    "Regressie (weer duimen, bedplassen) is normaal nu er een baby bij is — reageer er rustig op.",
   ]},
   { start: 5, end: 8, month: 2, label: "Week 5–8", facts: [
     "Eerste echte sociale glimlach — reageert bewust op een gezicht.",
@@ -107,9 +101,6 @@ const STAGES = [
     "Reageer op elk geluidje of glimlachje — dit is de eerste 'conversatie' en bouwt vertrouwen op.",
     "Begin (indien gewenst) met een voorzichtig dag-nachtritme: overdag licht en actief, 's avonds rustig en gedimd.",
     "Verdeel taken expliciet met {partner} — spreek hardop uit wie wat doet, in plaats van ervan uit te gaan.",
-  ], siblingTips: [
-    "Betrek {sibling} bij kleine, veilige taken zoals een luier aangeven — hij voelt zich dan nuttig.",
-    "Vermijd 'grote jongens huilen niet'-uitspraken; jaloezie en verdriet mogen er zijn.",
   ]},
   { start: 9, end: 12, month: 3, label: "Week 9–12", facts: [
     "Houdt het hoofdje steviger op tijdens buikligging.",
@@ -119,21 +110,15 @@ const STAGES = [
     "Dagelijks even buikligging (tummy time) stimuleert nek- en rugspieren — kort en vaak werkt beter dan lang en zelden.",
     "De zogeheten '3-maanden-huil' kan pieken; als huilen niet te troosten is, is dat geen falen van jullie kant.",
     "Plan als ouders weer een moment samen in, al is het kort — de relatie verdient ook aandacht naast de baby.",
-  ], siblingTips: [
-    "Laat {sibling} merken dat zijn glimlach of geluidje al reactie oproept bij {kind} — dat versterkt de band.",
-    "Blijf specifieke, ongedeelde aandacht geven aan {sibling}, los van de baby.",
   ]},
   { start: 13, end: 16, month: 4, label: "Week 13–16", facts: [
     "Rolt mogelijk voor het eerst van buik naar rug.",
     "Lacht hardop en brengt handjes samen boven de borst.",
     "Speeksel neemt toe — vroege voorbode van tandjes.",
   ], tips: [
-    "Nu ze kan rollen: nooit meer onbewaakt op het verschoontafel of de bank laten liggen.",
-    "Vaste terugkerende rituelen (bad, boekje, liedje) helpen nu al met voorspelbaarheid, ook al lijkt ze nog klein.",
+    "Nu {kind_subj} kan rollen: nooit meer onbewaakt op het verschoontafel of de bank laten liggen.",
+    "Vaste terugkerende rituelen (bad, boekje, liedje) helpen nu al met voorspelbaarheid, ook al lijkt {kind_subj} nog klein.",
     "Kwijlspeeltjes of een koud washandje kunnen verlichten als de tandjes al gaan spelen.",
-  ], siblingTips: [
-    "{sibling} kan nu al 'grappen maken' om haar te laten lachen — moedig dat spelenderwijs aan.",
-    "Leg uit dat {kind} nog niet kan spelen zoals hij gewend is, om teleurstelling te voorkomen.",
   ]},
   { start: 17, end: 20, month: 5, label: "Week 17–20", facts: [
     "Grijpt gericht naar speelgoed en brengt het naar de mond.",
@@ -141,11 +126,8 @@ const STAGES = [
     "Kan met wat steun even rechtop zitten.",
   ], tips: [
     "Alles wat binnen bereik komt gaat nu in de mond — check speelgoed en omgeving op kleine onderdelen.",
-    "Reageer benoemend op wat ze doet ('jij pakt het blokje!') — dit voedt taalontwikkeling voordat er woorden zijn.",
-    "Als {sibling} erbij is: betrek hem actief ('help jij {kind} haar speeltje pakken?') om jaloezie te verzachten.",
-  ], siblingTips: [
-    "Leer {sibling} voorzichtig aanraken en observeer altijd samen wanneer hij dichtbij haar speelt.",
-    "Geef hem een 'grote broer'-rol, zoals een boekje voorlezen aan {kind}.",
+    "Reageer benoemend op wat {kind_subj} doet ('jij pakt het blokje!') — dit voedt taalontwikkeling voordat er woorden zijn.",
+    "Als {sibling} erbij is: betrek {sib_obj} actief ('help jij {kind} {kind_poss} speeltje pakken?') om jaloezie te verzachten.",
   ]},
   { start: 21, end: 24, month: 6, label: "Week 21–24", facts: [
     "Vaak het moment om te starten met bijvoeding.",
@@ -153,23 +135,17 @@ const STAGES = [
     "Reageert herkenbaar op de eigen naam.",
   ], tips: [
     "Begin bijvoeding rustig met één nieuw voedingsmiddel per keer, zodat allergische reacties herkenbaar blijven.",
-    "Volg haar signalen van honger en verzadiging, niet alleen de klok.",
-    "Blijf haar aanraken en dragen ook nu ze mobieler wordt — fysiek contact blijft een basisbehoefte, geen 'verwennerij'.",
-  ], siblingTips: [
-    "Laat hem meehelpen bij de eerste hapjes geven — onder toezicht een leuk moment samen.",
-    "Blijf alert op jaloezie nu de aandacht rond bijvoeding meer naar {kind} gaat.",
+    "Volg {kind_poss} signalen van honger en verzadiging, niet alleen de klok.",
+    "Blijf {kind_obj} aanraken en dragen ook nu {kind_subj} mobieler wordt — fysiek contact blijft een basisbehoefte, geen 'verwennerij'.",
   ]},
   { start: 25, end: 28, month: 7, label: "Week 25–28", facts: [
     "Zit zonder steun rechtop.",
     "Brabbelt medeklinkers: 'bababa', 'dadada'.",
     "Objectpermanentie ontwikkelt — snapt dat iets nog bestaat als het uit zicht is.",
   ], tips: [
-    "Kiekeboe-spelletjes sluiten precies aan bij wat ze nu leert over objectpermanentie — leuk én leerzaam.",
-    "Vreemdelingenangst kan nu opkomen; forceer geen contact met minder bekende mensen, geef haar de tijd.",
-    "Baby-proof waar ze straks gaat kruipen: stopcontacten, snoeren, kleine voorwerpen.",
-  ], siblingTips: [
-    "Nu ze kan zitten, is samen op de grond spelen mogelijk — begeleid dit actief.",
-    "Prijs {sibling} expliciet als hij zachtjes of geduldig is, dat werkt versterkend.",
+    "Kiekeboe-spelletjes sluiten precies aan bij wat {kind_subj} nu leert over objectpermanentie — leuk én leerzaam.",
+    "Vreemdelingenangst kan nu opkomen; forceer geen contact met minder bekende mensen, geef {kind_obj} de tijd.",
+    "Baby-proof waar {kind_subj} straks gaat kruipen: stopcontacten, snoeren, kleine voorwerpen.",
   ]},
   { start: 29, end: 32, month: 8, label: "Week 29–32", facts: [
     "Kruipt of schuifelt op de billen.",
@@ -179,21 +155,15 @@ const STAGES = [
     "Geef ruimte om te oefenen met kruipen en optrekken, ook als dat af en toe een bonkje betekent.",
     "Vingerhapjes (zacht, in reepjes) sluiten mooi aan bij de opkomende pincetgreep.",
     "Consequent zijn met een 'nee' bij gevaar werkt beter dan veel woorden — herhaling is normaal en nodig op deze leeftijd.",
-  ], siblingTips: [
-    "Berg breekbare of kleine speelgoedonderdelen van {sibling} hoger op nu {kind} mobiel wordt.",
-    "Leer {sibling} een duidelijk 'stop' als hij haar even weg wil houden bij zijn spullen.",
   ]},
   { start: 33, end: 36, month: 9, label: "Week 33–36", facts: [
     "Trekt zichzelf overal aan op om te gaan staan.",
     "Zwaait vaarwel en klapt in de handjes.",
     "Zoekt actief naar verstopt speelgoed onder een doek.",
   ], tips: [
-    "Zet meubels vast (kantelbeveiliging) nu ze overal aan optrekt.",
-    "Vier kleine successen zichtbaar (klappen, juichen) — ze leest jullie reactie als bevestiging.",
+    "Zet meubels vast (kantelbeveiliging) nu {kind_subj} overal aan optrekt.",
+    "Vier kleine successen zichtbaar (klappen, juichen) — {kind_subj} leest jullie reactie als bevestiging.",
     "Blijf voorspelbare routines aanhouden rond eten en slapen; dit is een leeftijd waarin structuur veel oplevert.",
-  ], siblingTips: [
-    "Ze kan nu aan spullen trekken om op te staan — help {sibling} zijn eigen 'veilige plek' te hebben.",
-    "Vier samen kleine mijlpalen; laat {sibling} meejuichen bij haar vooruitgang.",
   ]},
   { start: 37, end: 40, month: 10, label: "Week 37–40", facts: [
     "Kruipt vlot en 'cruiset' langs de bank.",
@@ -201,11 +171,8 @@ const STAGES = [
     "Begrijpt simpele woorden als 'nee' en 'kijk'.",
   ], tips: [
     "Benoem gevoelens hardop ('je bent moe, hè') — dit legt de basis voor emotieherkenning later.",
-    "Laat haar zoveel mogelijk zelf proberen (lepel vasthouden, opstaan) ook als het rommelig of traag is.",
-    "Plan gezamenlijke momenten met {sibling} waarin hij 'grote broer' mag zijn, zoals samen een boekje lezen.",
-  ], siblingTips: [
-    "Stimuleer parallel spelen naast elkaar — nog niet samen, maar wel in dezelfde ruimte.",
-    "Leg uit dat 'mama' of 'papa' zeggen niet betekent dat ze hem minder leuk vindt.",
+    "Laat {kind_obj} zoveel mogelijk zelf proberen (lepel vasthouden, opstaan) ook als het rommelig of traag is.",
+    "Plan gezamenlijke momenten met {sibling} waarin {sib_subj} 'grote broer of zus' mag zijn, zoals samen een boekje lezen.",
   ]},
   { start: 41, end: 44, month: 11, label: "Week 41–44", facts: [
     "Staat af en toe los, zonder steun.",
@@ -214,10 +181,7 @@ const STAGES = [
   ], tips: [
     "Ruim scherpe hoeken en instabiele objecten op — vallen hoort bij leren lopen, maar maak het zo veilig mogelijk.",
     "Herhaling van simpele opdrachten in spelvorm ('geef papa de bal') versterkt begrip zonder dat het als les voelt.",
-    "Blijf zelf rustig bij frustratiehuilen — ze leent nu al jullie manier van omgaan met tegenslag.",
-  ], siblingTips: [
-    "{kind} imiteert {sibling} nu actief — benoem dat hardop, het maakt hem trots.",
-    "Blijf hem betrekken bij simpele opdrachten samen geven, zodat het een teamgevoel blijft.",
+    "Blijf zelf rustig bij frustratiehuilen — {kind_subj} leent nu al jullie manier van omgaan met tegenslag.",
   ]},
   { start: 45, end: 48, month: 12, label: "Week 45–48", facts: [
     "Zet mogelijk de allereerste zelfstandige stapjes.",
@@ -227,9 +191,6 @@ const STAGES = [
     "Geef ruimte voor 'gevaarlijk' spel binnen veilige grenzen (klimmen, vallen, opstaan) — dit bouwt zelfvertrouwen op.",
     "Imitatiespel (samen 'koken', poppen voeren) stimuleert taal en sociale ontwikkeling tegelijk.",
     "Vergelijk niet te veel met ontwikkelingslijstjes of met {sibling} op die leeftijd — de spreiding tussen kinderen is groot en normaal.",
-  ], siblingTips: [
-    "Laat {sibling} een rol spelen bij de voorbereiding van haar verjaardag.",
-    "Bereid hem voor op de aandacht die naar {kind} gaat tijdens het feest, met iets leuks speciaal voor hem.",
   ]},
   { start: 49, end: 52, month: 12, label: "Week 49–52 · 1e verjaardag", facts: [
     "Het eerste jaar zit erop — een compleet nieuw mensje erbij.",
@@ -239,13 +200,18 @@ const STAGES = [
     "Neem een moment om als ouders terug te kijken op het jaar — wat werkte, wat zouden jullie anders doen.",
     "Bij zorgen over ontwikkeling: het consultatiebureau (JGZ) is er precies voor dit soort vragen, gebruik het gerust.",
     "Blijf routines rond slapen en eten aanhouden bij de overgang naar peuterfase — die verandert nu geleidelijk.",
-  ], siblingTips: [
-    "Blik samen met {sibling} terug op het jaar: wat vond hij leuk aan grote broer zijn?",
-    "Blijf ook na het eerste jaar bewust individuele tijd met {sibling} inplannen.",
   ]},
 ];
 
 export { STAGES };
+
+// ---------- Voornaamwoorden op basis van geslacht ----------
+// gender: "jongen" | "meisje" | null/anders (dan neutraal "die"/"diens")
+export function getPronouns(gender) {
+  if (gender === "jongen") return { subj: "hij", obj: "hem", poss: "zijn" };
+  if (gender === "meisje") return { subj: "zij", obj: "haar", poss: "haar" };
+  return { subj: "die", obj: "die", poss: "diens" };
+}
 
 // ---------- Broer/zus-tips: afhankelijk van babyfase én leeftijd van broer/zus ----------
 // 5 bredere babyfases (in plaats van de 14 fijnmazige stages hierboven) gekruist met

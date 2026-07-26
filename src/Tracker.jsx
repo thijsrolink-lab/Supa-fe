@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { Square, CheckSquare, Stamp, Ruler, Weight, Plus, ChevronLeft, ChevronRight, Users, Settings, LogOut, BookOpen, Utensils, Moon, CloudRain, CalendarDays, TrendingUp, Image } from "lucide-react";
 import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
-import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData, getSiblingTips, TOPICS, getTopicTips } from "./content.js";
+import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData, getSiblingTips, TOPICS, getTopicTips, getPronouns } from "./content.js";
 import PhotoPanel from "./PhotoPanel.jsx";
 import JournalPanel from "./JournalPanel.jsx";
 
@@ -30,7 +30,13 @@ function renderText(str, vars) {
   return str
     .replace(/\{kind\}/g, vars.kind)
     .replace(/\{sibling\}/g, vars.sibling || "")
-    .replace(/\{partner\}/g, vars.partner || "je partner");
+    .replace(/\{partner\}/g, vars.partner || "je partner")
+    .replace(/\{kind_subj\}/g, vars.kindP?.subj || "die")
+    .replace(/\{kind_obj\}/g, vars.kindP?.obj || "die")
+    .replace(/\{kind_poss\}/g, vars.kindP?.poss || "diens")
+    .replace(/\{sib_subj\}/g, vars.sibP?.subj || "die")
+    .replace(/\{sib_obj\}/g, vars.sibP?.obj || "die")
+    .replace(/\{sib_poss\}/g, vars.sibP?.poss || "diens");
 }
 
 // Toont alleen een stip op weken waar echt een meting is opgeslagen; de
@@ -84,7 +90,11 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
 
   const stage = useMemo(() => STAGES.find(s => viewWeek >= s.start && viewWeek <= s.end) || STAGES[0], [viewWeek]);
   const siblingNames = (siblings || []).map(s => s.name).join(" en ");
-  const vars = { kind: child.name, sibling: siblingNames, partner: partnerName };
+  const kindP = getPronouns(child.gender);
+  // Bij precies 1 broer/zus gebruiken we diens geslacht voor voornaamwoorden in de
+  // algemene tips; bij 0 of meerdere (gemengd) vallen we terug op neutraal "die".
+  const sibP = (siblings && siblings.length === 1) ? getPronouns(siblings[0].gender) : getPronouns(null);
+  const vars = { kind: child.name, sibling: siblingNames, partner: partnerName, kindP, sibP };
 
   const addEntry = async () => {
     if (!weightInput && !lengthInput) return;

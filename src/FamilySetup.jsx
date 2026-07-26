@@ -9,12 +9,12 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
   const [mother, setMother] = useState(existingFamily?.mother_name || "");
   const [children, setChildren] = useState(
     existingFamily?.children?.length
-      ? existingFamily.children.map(c => ({ id: c.id, name: c.name, birth_date: c.birth_date || "" }))
-      : [{ id: null, name: "", birth_date: "" }]
+      ? existingFamily.children.map(c => ({ id: c.id, name: c.name, birth_date: c.birth_date || "", gender: c.gender || "" }))
+      : [{ id: null, name: "", birth_date: "", gender: "" }]
   );
   const [siblings, setSiblings] = useState(
     existingFamily?.siblings?.length
-      ? existingFamily.siblings.map(s => ({ id: s.id, name: s.name, birth_date: s.birth_date || "" }))
+      ? existingFamily.siblings.map(s => ({ id: s.id, name: s.name, birth_date: s.birth_date || "", gender: s.gender || "" }))
       : []
   );
   const [error, setError] = useState("");
@@ -23,13 +23,13 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
   const updateChild = (i, field, value) => {
     setChildren(prev => prev.map((c, idx) => idx === i ? { ...c, [field]: value } : c));
   };
-  const addChild = () => setChildren(prev => [...prev, { id: null, name: "", birth_date: "" }]);
+  const addChild = () => setChildren(prev => [...prev, { id: null, name: "", birth_date: "", gender: "" }]);
   const removeChild = (i) => setChildren(prev => prev.filter((_, idx) => idx !== i));
 
   const updateSibling = (i, field, value) => {
     setSiblings(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: value } : s));
   };
-  const addSibling = () => setSiblings(prev => [...prev, { id: null, name: "", birth_date: "" }]);
+  const addSibling = () => setSiblings(prev => [...prev, { id: null, name: "", birth_date: "", gender: "" }]);
   const removeSibling = (i) => setSiblings(prev => prev.filter((_, idx) => idx !== i));
 
   const submit = async (e) => {
@@ -71,9 +71,9 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
       }
       for (const c of cleanChildren) {
         if (c.id) {
-          await supabase.from("children").update({ name: c.name, birth_date: c.birth_date || null }).eq("id", c.id);
+          await supabase.from("children").update({ name: c.name, birth_date: c.birth_date || null, gender: c.gender || null }).eq("id", c.id);
         } else {
-          await supabase.from("children").insert({ family_id: familyId, name: c.name, birth_date: c.birth_date || null });
+          await supabase.from("children").insert({ family_id: familyId, name: c.name, birth_date: c.birth_date || null, gender: c.gender || null });
         }
       }
 
@@ -88,9 +88,9 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
       }
       for (const s of cleanSiblings) {
         if (s.id) {
-          await supabase.from("siblings").update({ name: s.name, birth_date: s.birth_date || null }).eq("id", s.id);
+          await supabase.from("siblings").update({ name: s.name, birth_date: s.birth_date || null, gender: s.gender || null }).eq("id", s.id);
         } else {
-          await supabase.from("siblings").insert({ family_id: familyId, name: s.name, birth_date: s.birth_date || null });
+          await supabase.from("siblings").insert({ family_id: familyId, name: s.name, birth_date: s.birth_date || null, gender: s.gender || null });
         }
       }
 
@@ -116,8 +116,8 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
         </div>
         <p style={styles.p}>
           {existingFamily
-            ? "Pas namen en geboortedata aan, of voeg een kind toe."
-            : "Dit gebruiken we om de weetjes en tips persoonlijk te maken."}
+            ? "Pas namen, geboortedata en geslacht aan, of voeg een kind toe."
+            : "Dit gebruiken we om de weetjes en tips persoonlijk te maken — inclusief de juiste voornaamwoorden."}
         </p>
 
         <form onSubmit={submit}>
@@ -141,6 +141,14 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
                 type="date" value={c.birth_date} onChange={(e) => updateChild(i, "birth_date", e.target.value)}
                 style={styles.memberDateInput}
               />
+              <select
+                value={c.gender} onChange={(e) => updateChild(i, "gender", e.target.value)}
+                style={styles.memberDateInput}
+              >
+                <option value="">Geslacht</option>
+                <option value="meisje">Meisje</option>
+                <option value="jongen">Jongen</option>
+              </select>
               {children.length > 1 && (
                 <button type="button" style={styles.removeBtn} onClick={() => removeChild(i)} aria-label="Verwijder kind">
                   <X size={14} />
@@ -167,6 +175,14 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
                 type="date" value={s.birth_date} onChange={(e) => updateSibling(i, "birth_date", e.target.value)}
                 style={styles.memberDateInput}
               />
+              <select
+                value={s.gender} onChange={(e) => updateSibling(i, "gender", e.target.value)}
+                style={styles.memberDateInput}
+              >
+                <option value="">Geslacht</option>
+                <option value="meisje">Meisje</option>
+                <option value="jongen">Jongen</option>
+              </select>
               <button type="button" style={styles.removeBtn} onClick={() => removeSibling(i)} aria-label="Verwijder broer/zus">
                 <X size={14} />
               </button>

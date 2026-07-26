@@ -13,6 +13,7 @@ create table if not exists public.children (
   family_id uuid references public.families(id) on delete cascade not null,
   name text not null,
   birth_date date,
+  gender text,
   created_at timestamptz default now()
 );
 
@@ -33,6 +34,7 @@ create table if not exists public.siblings (
   family_id uuid references public.families(id) on delete cascade not null,
   name text not null,
   birth_date date,
+  gender text,
   created_at timestamptz default now()
 );
 
