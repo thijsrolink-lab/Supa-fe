@@ -37,7 +37,7 @@ export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
   const weightData = useMemo(() => buildChartData(52, WEIGHT_REF_KG, entries, "weight"), [entries]);
   const lengthData = useMemo(() => buildChartData(52, LENGTH_REF_CM, entries, "length"), [entries]);
 
-  if (!loaded) return <div style={{ padding: 40, fontFamily: "'IBM Plex Mono', monospace" }}>Jaarverslag samenstellen…</div>;
+  if (!loaded) return <div style={{ padding: 40, fontFamily: "'Inter', sans-serif" }}>Jaarverslag samenstellen…</div>;
 
   return (
     <div style={styles.wrap}>
@@ -70,22 +70,22 @@ export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
           <div style={styles.sectionLabel}>Groei — gewicht (kg)</div>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={weightData} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="2 4" stroke="#DED9C4" />
-              <XAxis dataKey="week" tick={{ fontSize: 10, fill: "#5B6670", fontFamily: "IBM Plex Mono" }} />
-              <YAxis tick={{ fontSize: 10, fill: "#5B6670", fontFamily: "IBM Plex Mono" }} width={28} domain={[0, 13]} ticks={[0, 3, 6, 9, 12]} />
+              <CartesianGrid strokeDasharray="2 4" stroke="#E7EAF0" />
+              <XAxis dataKey="week" tick={{ fontSize: 10, fill: "#6B7685", fontFamily: "Inter" }} />
+              <YAxis tick={{ fontSize: 10, fill: "#6B7685", fontFamily: "Inter" }} width={28} domain={[0, 13]} ticks={[0, 3, 6, 9, 12]} />
               <Tooltip />
-              <Line type="monotone" dataKey="gemeten" stroke="#2F6F62" strokeWidth={2.5} dot={false} connectNulls />
+              <Line type="monotone" dataKey="gemeten" stroke="#0FB8A6" strokeWidth={2.5} dot={false} connectNulls />
             </LineChart>
           </ResponsiveContainer>
 
           <div style={styles.sectionLabel}>Groei — lengte (cm)</div>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={lengthData} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="2 4" stroke="#DED9C4" />
-              <XAxis dataKey="week" tick={{ fontSize: 10, fill: "#5B6670", fontFamily: "IBM Plex Mono" }} />
-              <YAxis tick={{ fontSize: 10, fill: "#5B6670", fontFamily: "IBM Plex Mono" }} width={28} domain={[40, 82]} ticks={[40, 50, 60, 70, 80]} />
+              <CartesianGrid strokeDasharray="2 4" stroke="#E7EAF0" />
+              <XAxis dataKey="week" tick={{ fontSize: 10, fill: "#6B7685", fontFamily: "Inter" }} />
+              <YAxis tick={{ fontSize: 10, fill: "#6B7685", fontFamily: "Inter" }} width={28} domain={[40, 82]} ticks={[40, 50, 60, 70, 80]} />
               <Tooltip />
-              <Line type="monotone" dataKey="gemeten" stroke="#B0483D" strokeWidth={2.5} dot={false} connectNulls />
+              <Line type="monotone" dataKey="gemeten" stroke="#E4572E" strokeWidth={2.5} dot={false} connectNulls />
             </LineChart>
           </ResponsiveContainer>
 
@@ -101,8 +101,8 @@ export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
                 {stageNotes.length > 0 && (
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                     {stageNotes.map((n, ni) => (
-                      <div key={ni} style={{ fontSize: 13, fontStyle: "italic", color: "#5B6670", borderLeft: "2px solid #D3CEB9", paddingLeft: 10 }}>
-                        "{n.text}" <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontStyle: "normal", fontSize: 11 }}>— week {n.week}</span>
+                      <div key={ni} style={{ fontSize: 13, fontStyle: "italic", color: "#6B7685", borderLeft: "2px solid #E7EAF0", paddingLeft: 10 }}>
+                        "{n.text}" <span style={{ fontFamily: "'Inter', sans-serif", fontStyle: "normal", fontSize: 11 }}>— week {n.week}</span>
                       </div>
                     ))}
                   </div>
@@ -111,7 +111,7 @@ export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
                     {stagePhotos.map((p) => (
                       urls[p.storage_path] && (
-                        <img key={p.id} src={urls[p.storage_path]} alt={stage.label} style={{ width: 96, height: 96, objectFit: "cover", borderRadius: 8, border: "1px solid #D3CEB9" }} />
+                        <img key={p.id} src={urls[p.storage_path]} alt={stage.label} style={{ width: 96, height: 96, objectFit: "cover", borderRadius: 8, border: "1px solid #E7EAF0" }} />
                       )
                     ))}
                   </div>

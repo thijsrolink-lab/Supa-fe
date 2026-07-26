@@ -88,7 +88,7 @@ export default function JournalPanel({ childId, week, entries, onChanged }) {
             {recording ? "Stop opname" : "Inspreken"}
           </button>
         ) : (
-          <span style={{ fontSize: 11.5, color: "#8A8368", fontFamily: "'IBM Plex Mono', monospace" }}>
+          <span style={{ fontSize: 11.5, color: "#9AA3AF", fontFamily: "'Inter', sans-serif" }}>
             Inspreken wordt niet ondersteund in deze browser — typen werkt wel.
           </span>
         )}

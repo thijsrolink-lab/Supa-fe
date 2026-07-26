@@ -176,7 +176,7 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
             <Plus size={14} /> Broer/zus toevoegen
           </button>
 
-          {error && <div style={{ ...styles.saveMsg, color: "#B0483D" }}>{error}</div>}
+          {error && <div style={{ ...styles.saveMsg, color: "#E4572E" }}>{error}</div>}
 
           <button className="gb-stampbtn" type="submit" disabled={busy} style={{ ...styles.stampBtn, justifyContent: "center", width: "100%" }}>
             <Save size={14} /> {busy ? "Opslaan…" : "Opslaan"}

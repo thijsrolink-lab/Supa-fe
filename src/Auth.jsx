@@ -60,7 +60,7 @@ export default function Auth() {
             />
           </div>
 
-          {error && <div style={{ ...styles.saveMsg, color: "#B0483D" }}>{error}</div>}
+          {error && <div style={{ ...styles.saveMsg, color: "#E4572E" }}>{error}</div>}
           {info && <div style={styles.saveMsg}>{info}</div>}
 
           <button className="gb-stampbtn" type="submit" disabled={busy} style={{ ...styles.stampBtn, justifyContent: "center", marginTop: 4 }}>
@@ -69,7 +69,7 @@ export default function Auth() {
           </button>
         </form>
 
-        <div style={{ marginTop: 16, fontSize: 13, color: "#5B6670" }}>
+        <div style={{ marginTop: 16, fontSize: 13, color: "#6B7685" }}>
           {mode === "login" ? (
             <>Nog geen account?{" "}
               <button onClick={() => { setMode("signup"); setError(""); setInfo(""); }} style={styles.linkBtn}>Maak er een</button>

@@ -75,7 +75,7 @@ export default function PhotoPanel({ childId, userId, week, photos, onChanged })
               <img src={urls[p.storage_path]} alt={`Week ${week}`} style={styles.photoThumb} />
             ) : (
               <div style={{ ...styles.photoThumb, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Loader2 size={14} className="gb-spin" color="#8A8368" />
+                <Loader2 size={14} className="gb-spin" color="#9AA3AF" />
               </div>
             )}
             <button style={styles.photoRemoveBtn} onClick={() => remove(p)} aria-label="Verwijder foto">
@@ -88,7 +88,7 @@ export default function PhotoPanel({ childId, userId, week, photos, onChanged })
         <Camera size={13} /> {busy ? "Bezig…" : "Foto toevoegen bij deze week"}
         <input type="file" accept="image/*" onChange={upload} disabled={busy} style={{ display: "none" }} />
       </label>
-      {error && <div style={{ ...styles.saveMsg, color: "#B0483D" }}>{error}</div>}
+      {error && <div style={{ ...styles.saveMsg, color: "#E4572E" }}>{error}</div>}
     </div>
   );
 }

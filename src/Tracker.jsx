@@ -10,9 +10,9 @@ import JournalPanel from "./JournalPanel.jsx";
 const TOPIC_ICONS = { eten: Utensils, slapen: Moon, huilen: CloudRain };
 
 const TABS = [
-  { id: "vandaag", label: "Vandaag", icon: CalendarDays },
-  { id: "groei", label: "Groei", icon: TrendingUp },
-  { id: "media", label: "Foto's & verslag", icon: Image },
+  { id: "vandaag", label: "Vandaag", icon: CalendarDays, color: "#0FB8A6" },
+  { id: "groei", label: "Groei", icon: TrendingUp, color: "#FF7A59" },
+  { id: "media", label: "Foto's & verslag", icon: Image, color: "#8B7FE0" },
 ];
 
 function weekFromBirth(birthDateStr) {
@@ -37,7 +37,7 @@ function renderText(str, vars) {
 // tussenliggende geïnterpoleerde punten blijven een vloeiende lijn zonder stippen.
 function MeetpuntDot({ cx, cy, payload, color }) {
   if (!payload?.isMeetpunt || cx == null || cy == null) return null;
-  return <circle cx={cx} cy={cy} r={4} fill={color} stroke="#FBF9F1" strokeWidth={1.5} />;
+  return <circle cx={cx} cy={cy} r={4} fill={color} stroke="#FFFFFF" strokeWidth={1.5} />;
 }
 
 export default function Tracker({ child, siblings, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, userId, onOpenReport }) {
@@ -113,7 +113,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
   const lengthData = useMemo(() => buildChartData(52, LENGTH_REF_CM, entries, "length"), [entries]);
   const months = useMemo(() => Array.from(new Set(STAGES.map(s => s.month))), []);
 
-  if (!loaded) return <div style={{ padding: 40, fontFamily: "'IBM Plex Mono', monospace", color: "#1E2A33" }}>Even laden…</div>;
+  if (!loaded) return <div style={{ padding: 40, fontFamily: "'Inter', sans-serif", color: "#1E2A33" }}>Even laden…</div>;
 
   return (
     <div style={styles.wrap}>
@@ -206,7 +206,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
                 <ul style={{ ...styles.checklist, marginTop: 10 }}>
                   {getTopicTips(activeTopic, viewWeek).map((tip, i) => (
                     <li key={i} style={styles.checkItem}>
-                      {React.createElement(TOPIC_ICONS[activeTopic], { size: 13, color: "#8A5A2B", style: { flexShrink: 0, marginTop: 3 } })}
+                      {React.createElement(TOPIC_ICONS[activeTopic], { size: 13, color: "#9A6414", style: { flexShrink: 0, marginTop: 3 } })}
                       <span>{renderText(tip, vars)}</span>
                     </li>
                   ))}
@@ -219,7 +219,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
               <ul style={styles.checklist}>
                 {stage.facts.map((f, i) => (
                   <li key={i} style={styles.checkItem}>
-                    <CheckSquare size={15} color="#2F6F62" style={{ flexShrink: 0, marginTop: 2 }} />
+                    <CheckSquare size={15} color="#0FB8A6" style={{ flexShrink: 0, marginTop: 2 }} />
                     <span>{renderText(f, vars)}</span>
                   </li>
                 ))}
@@ -232,7 +232,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
                 <ul style={styles.checklist}>
                   {stage.tips.map((t, i) => (
                     <li key={i} style={styles.checkItem}>
-                      <Square size={13} color="#B0483D" style={{ flexShrink: 0, marginTop: 3 }} />
+                      <Square size={13} color="#FF7A59" style={{ flexShrink: 0, marginTop: 3 }} />
                       <span>{renderText(t, vars)}</span>
                     </li>
                   ))}
@@ -251,7 +251,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
                         <ul style={styles.checklist}>
                           {tips.map((t, i) => (
                             <li key={i} style={styles.checkItem}>
-                              <Square size={13} color="#3F6E8C" style={{ flexShrink: 0, marginTop: 3 }} />
+                              <Square size={13} color="#8B7FE0" style={{ flexShrink: 0, marginTop: 3 }} />
                               <span>{renderText(t, sibVars)}</span>
                             </li>
                           ))}
@@ -272,13 +272,13 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
               <div style={styles.sectionLabel}>Meting toevoegen — week {viewWeek}</div>
               <div style={styles.formRow}>
                 <div className="gb-formfield" style={styles.formField}>
-                  <Weight size={14} color="#5B6670" />
+                  <Weight size={14} color="#6B7685" />
                   <span style={styles.formFieldLabel}>Gewicht</span>
                   <input className="gb-forminput" type="number" inputMode="decimal" step="0.01" value={weightInput} onChange={(e) => setWeightInput(e.target.value)} style={styles.formInput} placeholder="_____" />
                   <span style={styles.formUnit}>kg</span>
                 </div>
                 <div className="gb-formfield" style={styles.formField}>
-                  <Ruler size={14} color="#5B6670" />
+                  <Ruler size={14} color="#6B7685" />
                   <span style={styles.formFieldLabel}>Lengte</span>
                   <input className="gb-forminput" type="number" inputMode="decimal" step="0.1" value={lengthInput} onChange={(e) => setLengthInput(e.target.value)} style={styles.formInput} placeholder="_____" />
                   <span style={styles.formUnit}>cm</span>
@@ -292,15 +292,15 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
                   <div style={styles.chartTitle}>GEWICHT (KG) — met WHO-referentie</div>
                   <ResponsiveContainer width="100%" height={240}>
                     <LineChart data={weightData} margin={{ top: 10, right: 8, left: -8, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="2 4" stroke="#DED9C4" />
-                      <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#5B6670", fontFamily: "IBM Plex Mono" }} label={{ value: "week", position: "insideBottom", offset: -2, fontSize: 10, fill: "#8A8368" }} />
-                      <YAxis tick={{ fontSize: 11, fill: "#5B6670", fontFamily: "IBM Plex Mono" }} width={30} domain={[0, 13]} ticks={[0, 3, 6, 9, 12]} allowDecimals={false} />
-                      <Tooltip contentStyle={{ fontFamily: "IBM Plex Mono", fontSize: 12 }} />
-                      <Legend wrapperStyle={{ fontFamily: "IBM Plex Mono", fontSize: 11 }} />
-                      <Line type="monotone" dataKey="boven" name="bovengrens" stroke="#D9D4C0" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
-                      <Line type="monotone" dataKey="gemiddeld" name="gemiddelde" stroke="#8A8368" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
-                      <Line type="monotone" dataKey="onder" name="ondergrens" stroke="#6B6550" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
-                      <Line type="monotone" dataKey="gemeten" name={child.name} stroke="#2F6F62" strokeWidth={3} dot={<MeetpuntDot color="#2F6F62" />} activeDot={{ r: 5 }} connectNulls />
+                      <CartesianGrid strokeDasharray="2 4" stroke="#E7EAF0" />
+                      <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#6B7685", fontFamily: "Inter" }} label={{ value: "week", position: "insideBottom", offset: -2, fontSize: 10, fill: "#9AA3AF" }} />
+                      <YAxis tick={{ fontSize: 11, fill: "#6B7685", fontFamily: "Inter" }} width={30} domain={[0, 13]} ticks={[0, 3, 6, 9, 12]} allowDecimals={false} />
+                      <Tooltip contentStyle={{ fontFamily: "Inter", fontSize: 12 }} />
+                      <Legend wrapperStyle={{ fontFamily: "Inter", fontSize: 11 }} />
+                      <Line type="monotone" dataKey="boven" name="bovengrens" stroke="#D8DCE3" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
+                      <Line type="monotone" dataKey="gemiddeld" name="gemiddelde" stroke="#9AA3AF" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
+                      <Line type="monotone" dataKey="onder" name="ondergrens" stroke="#6B7280" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
+                      <Line type="monotone" dataKey="gemeten" name={child.name} stroke="#0FB8A6" strokeWidth={3} dot={<MeetpuntDot color="#0FB8A6" />} activeDot={{ r: 5 }} connectNulls />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -308,15 +308,15 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
                   <div style={styles.chartTitle}>LENGTE (CM) — met WHO-referentie</div>
                   <ResponsiveContainer width="100%" height={240}>
                     <LineChart data={lengthData} margin={{ top: 10, right: 8, left: -8, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="2 4" stroke="#DED9C4" />
-                      <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#5B6670", fontFamily: "IBM Plex Mono" }} label={{ value: "week", position: "insideBottom", offset: -2, fontSize: 10, fill: "#8A8368" }} />
-                      <YAxis tick={{ fontSize: 11, fill: "#5B6670", fontFamily: "IBM Plex Mono" }} width={30} domain={[40, 82]} ticks={[40, 50, 60, 70, 80]} allowDecimals={false} />
-                      <Tooltip contentStyle={{ fontFamily: "IBM Plex Mono", fontSize: 12 }} />
-                      <Legend wrapperStyle={{ fontFamily: "IBM Plex Mono", fontSize: 11 }} />
-                      <Line type="monotone" dataKey="boven" name="bovengrens" stroke="#D9D4C0" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
-                      <Line type="monotone" dataKey="gemiddeld" name="gemiddelde" stroke="#8A8368" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
-                      <Line type="monotone" dataKey="onder" name="ondergrens" stroke="#6B6550" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
-                      <Line type="monotone" dataKey="gemeten" name={child.name} stroke="#B0483D" strokeWidth={3} dot={<MeetpuntDot color="#B0483D" />} activeDot={{ r: 5 }} connectNulls />
+                      <CartesianGrid strokeDasharray="2 4" stroke="#E7EAF0" />
+                      <XAxis dataKey="week" tick={{ fontSize: 11, fill: "#6B7685", fontFamily: "Inter" }} label={{ value: "week", position: "insideBottom", offset: -2, fontSize: 10, fill: "#9AA3AF" }} />
+                      <YAxis tick={{ fontSize: 11, fill: "#6B7685", fontFamily: "Inter" }} width={30} domain={[40, 82]} ticks={[40, 50, 60, 70, 80]} allowDecimals={false} />
+                      <Tooltip contentStyle={{ fontFamily: "Inter", fontSize: 12 }} />
+                      <Legend wrapperStyle={{ fontFamily: "Inter", fontSize: 11 }} />
+                      <Line type="monotone" dataKey="boven" name="bovengrens" stroke="#D8DCE3" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
+                      <Line type="monotone" dataKey="gemiddeld" name="gemiddelde" stroke="#9AA3AF" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
+                      <Line type="monotone" dataKey="onder" name="ondergrens" stroke="#6B7280" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
+                      <Line type="monotone" dataKey="gemeten" name={child.name} stroke="#FF7A59" strokeWidth={3} dot={<MeetpuntDot color="#FF7A59" />} activeDot={{ r: 5 }} connectNulls />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -356,7 +356,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
           return (
             <button
               key={t.id}
-              style={{ ...styles.bottomNavBtn, ...(active ? styles.bottomNavBtnActive : {}) }}
+              style={{ ...styles.bottomNavBtn, ...(active ? { ...styles.bottomNavBtnActive, background: t.color } : {}) }}
               onClick={() => setActiveTab(t.id)}
             >
               <Icon size={19} />
