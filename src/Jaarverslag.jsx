@@ -5,13 +5,6 @@ import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
 import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData } from "./content.js";
 
-function renderText(str, vars) {
-  return str
-    .replace(/\{kind\}/g, vars.kind)
-    .replace(/\{sibling\}/g, vars.sibling || "")
-    .replace(/\{partner\}/g, vars.partner || "je partner");
-}
-
 export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
   const [entries, setEntries] = useState([]);
   const [photos, setPhotos] = useState([]);
@@ -41,7 +34,6 @@ export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
     })();
   }, [child.id]);
 
-  const vars = { kind: child.name, sibling: (siblings || []).map(s => s.name).join(" en "), partner: partnerName };
   const weightData = useMemo(() => buildChartData(52, WEIGHT_REF_KG, entries, "weight"), [entries]);
   const lengthData = useMemo(() => buildChartData(52, LENGTH_REF_CM, entries, "length"), [entries]);
 
@@ -102,19 +94,12 @@ export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
           {STAGES.map((stage, i) => {
             const stagePhotos = photos.filter(p => p.week >= stage.start && p.week <= stage.end);
             const stageNotes = journalEntries.filter(j => j.week >= stage.start && j.week <= stage.end && j.text?.trim());
+            if (stagePhotos.length === 0 && stageNotes.length === 0) return null;
             return (
               <div key={i} style={{ marginBottom: 22, breakInside: "avoid" }}>
                 <div style={styles.sectionLabel}>{stage.label}</div>
-                <ul style={styles.checklist}>
-                  {stage.facts.slice(0, 2).map((f, fi) => (
-                    <li key={fi} style={styles.checkItem}>
-                      <span style={{ color: "#2F6F62" }}>·</span>
-                      <span>{renderText(f, vars)}</span>
-                    </li>
-                  ))}
-                </ul>
                 {stageNotes.length > 0 && (
-                  <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                     {stageNotes.map((n, ni) => (
                       <div key={ni} style={{ fontSize: 13, fontStyle: "italic", color: "#5B6670", borderLeft: "2px solid #D3CEB9", paddingLeft: 10 }}>
                         "{n.text}" <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontStyle: "normal", fontSize: 11 }}>— week {n.week}</span>
