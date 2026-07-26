@@ -61,6 +61,17 @@ create table if not exists public.journal_entries (
   unique (child_id, week)
 );
 
+-- Mijlpalen: "eerste keertjes" die je afvinkt zodra ze gebeuren, los van de week
+-- die je op dat moment aan het bekijken bent.
+create table if not exists public.milestones (
+  id uuid primary key default gen_random_uuid(),
+  child_id uuid references public.children(id) on delete cascade not null,
+  milestone_key text not null,
+  achieved_date date not null default current_date,
+  created_at timestamptz default now(),
+  unique (child_id, milestone_key)
+);
+
 -- Storage-bucket voor foto's (privé — alleen toegankelijk via signed URLs voor
 -- de eigenaar, zie de policies hieronder).
 insert into storage.buckets (id, name, public)
@@ -73,6 +84,7 @@ alter table public.growth_entries enable row level security;
 alter table public.siblings enable row level security;
 alter table public.photos enable row level security;
 alter table public.journal_entries enable row level security;
+alter table public.milestones enable row level security;
 
 -- Iedereen kan alleen het eigen gezin zien/bewerken.
 create policy "own family" on public.families
@@ -103,6 +115,22 @@ create policy "own photos" on public.photos
   );
 
 create policy "own journal entries" on public.journal_entries
+  for all using (
+    child_id in (
+      select c.id from public.children c
+      join public.families f on c.family_id = f.id
+      where f.user_id = auth.uid()
+    )
+  )
+  with check (
+    child_id in (
+      select c.id from public.children c
+      join public.families f on c.family_id = f.id
+      where f.user_id = auth.uid()
+    )
+  );
+
+create policy "own milestones" on public.milestones
   for all using (
     child_id in (
       select c.id from public.children c

@@ -213,6 +213,23 @@ export function getPronouns(gender) {
   return { subj: "die", obj: "die", poss: "diens" };
 }
 
+// ---------- Mijlpalen: "eerste keertjes" om af te vinken ----------
+export const MILESTONES = [
+  { key: "glimlach", label: "Eerste (bewuste) glimlach" },
+  { key: "hardop_lachen", label: "Eerste keer hardop lachen" },
+  { key: "omrollen_bn", label: "Eerste keer omrollen (buik naar rug)" },
+  { key: "omrollen_nb", label: "Eerste keer omrollen (rug naar buik)" },
+  { key: "zelfstandig_zitten", label: "Eerste keer zelfstandig zitten" },
+  { key: "eerste_tandje", label: "Eerste tandje" },
+  { key: "eerste_hapje", label: "Eerste hapje vast voedsel" },
+  { key: "kruipen", label: "Eerste keer kruipen" },
+  { key: "optrekken", label: "Eerste keer optrekken tot staan" },
+  { key: "eerste_woordje", label: "Eerste woordje" },
+  { key: "los_staan", label: "Eerste keer los staan" },
+  { key: "eerste_stapjes", label: "Eerste stapjes" },
+  { key: "eerste_verjaardag", label: "Eerste verjaardag" },
+];
+
 // ---------- Broer/zus-tips: afhankelijk van babyfase én leeftijd van broer/zus ----------
 // 5 bredere babyfases (in plaats van de 14 fijnmazige stages hierboven) gekruist met
 // 4 leeftijdscategorieën van de broer/zus, plus "onbekend" als er geen geboortedatum is.

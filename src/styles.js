@@ -136,6 +136,14 @@ export const styles = {
     margin: 6, fontSize: 10.5, fontFamily: FONT_BODY, fontWeight: 600, cursor: "pointer", borderRadius: 14,
   },
   bottomNavBtnActive: { color: "#fff", fontWeight: 700 },
+
+  // ---- Milestones checklist ----
+  milestoneRow: { display: "flex", alignItems: "center", gap: 10, padding: "8px 2px", cursor: "pointer" },
+  milestoneCheck: { width: 22, height: 22, borderRadius: 7, border: "2px solid #E7EAF0", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" },
+  milestoneCheckDone: { background: "#0FB8A6", borderColor: "#0FB8A6" },
+  milestoneLabel: { fontSize: 14, color: "#1E2530", flex: 1 },
+  milestoneLabelDone: { color: "#6B7685", textDecoration: "line-through" },
+  milestoneDate: { fontSize: 11.5, color: "#0FB8A6", fontWeight: 600, flexShrink: 0 },
 };
 
 export const COLORS = COLOR;
