@@ -15,6 +15,7 @@ function renderText(str, vars) {
 export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
   const [entries, setEntries] = useState([]);
   const [photos, setPhotos] = useState([]);
+  const [journalEntries, setJournalEntries] = useState([]);
   const [urls, setUrls] = useState({});
   const [loaded, setLoaded] = useState(false);
 
@@ -25,8 +26,11 @@ export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
         .from("growth_entries").select("week, weight, length").eq("child_id", child.id).order("week");
       const { data: p } = await supabase
         .from("photos").select("id, week, storage_path").eq("child_id", child.id).order("week");
+      const { data: j } = await supabase
+        .from("journal_entries").select("week, text").eq("child_id", child.id).order("week");
       setEntries(g || []);
       setPhotos(p || []);
+      setJournalEntries(j || []);
       const next = {};
       for (const photo of p || []) {
         const { data } = await supabase.storage.from("baby-photos").createSignedUrl(photo.storage_path, 3600);
@@ -97,6 +101,7 @@ export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
 
           {STAGES.map((stage, i) => {
             const stagePhotos = photos.filter(p => p.week >= stage.start && p.week <= stage.end);
+            const stageNotes = journalEntries.filter(j => j.week >= stage.start && j.week <= stage.end && j.text?.trim());
             return (
               <div key={i} style={{ marginBottom: 22, breakInside: "avoid" }}>
                 <div style={styles.sectionLabel}>{stage.label}</div>
@@ -108,6 +113,15 @@ export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
                     </li>
                   ))}
                 </ul>
+                {stageNotes.length > 0 && (
+                  <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+                    {stageNotes.map((n, ni) => (
+                      <div key={ni} style={{ fontSize: 13, fontStyle: "italic", color: "#5B6670", borderLeft: "2px solid #D3CEB9", paddingLeft: 10 }}>
+                        "{n.text}" <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontStyle: "normal", fontSize: 11 }}>— week {n.week}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {stagePhotos.length > 0 && (
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
                     {stagePhotos.map((p) => (

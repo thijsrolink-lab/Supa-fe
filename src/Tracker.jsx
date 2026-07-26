@@ -5,6 +5,7 @@ import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
 import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData, getSiblingTips, TOPICS, getTopicTips } from "./content.js";
 import PhotoPanel from "./PhotoPanel.jsx";
+import JournalPanel from "./JournalPanel.jsx";
 
 const TOPIC_ICONS = { eten: Utensils, slapen: Moon, huilen: CloudRain };
 
@@ -36,6 +37,7 @@ function MeetpuntDot({ cx, cy, payload, color }) {
 export default function Tracker({ child, siblings, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, userId, onOpenReport }) {
   const [entries, setEntries] = useState([]);
   const [photos, setPhotos] = useState([]);
+  const [journalEntries, setJournalEntries] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [viewWeek, setViewWeek] = useState(0);
   const [weightInput, setWeightInput] = useState("");
@@ -62,6 +64,12 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
         .eq("child_id", child.id)
         .order("week", { ascending: true });
       setPhotos(photoRows || []);
+      const { data: journalRows } = await supabase
+        .from("journal_entries")
+        .select("week, text")
+        .eq("child_id", child.id)
+        .order("week", { ascending: true });
+      setJournalEntries(journalRows || []);
       setLoaded(true);
     })();
   }, [child.id, child.birth_date]);
@@ -210,6 +218,11 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
             <div style={{ marginTop: 12 }}>
               <PhotoPanel childId={child.id} userId={userId} week={viewWeek} photos={photos} onChanged={setPhotos} />
             </div>
+
+            <div style={styles.rule} />
+
+            <div style={styles.sectionLabel}>Verslagje — week {viewWeek}</div>
+            <JournalPanel childId={child.id} week={viewWeek} entries={journalEntries} onChanged={setJournalEntries} />
 
             <div style={styles.rule} />
 

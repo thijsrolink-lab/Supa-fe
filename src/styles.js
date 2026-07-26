@@ -76,4 +76,10 @@ export const styles = {
   quickTipsRow: { display: "flex", gap: 8, flexWrap: "wrap" },
   topicChip: { display: "flex", alignItems: "center", gap: 6, border: "1px solid #E3C994", background: "#FBF9F1", color: "#8A5A2B", borderRadius: 20, padding: "6px 13px", fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace", cursor: "pointer" },
   topicChipActive: { background: "#8A5A2B", color: "#FBF3E4", borderColor: "#8A5A2B", fontWeight: 600 },
+
+  // ---- Journal (verslagje per week) ----
+  journalTextarea: { width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #D3CEB9", fontSize: 14, fontFamily: "'Work Sans', sans-serif", color: "#1E2A33", resize: "vertical", lineHeight: 1.5, background: "#FBF9F1" },
+  journalMicBtn: { display: "flex", alignItems: "center", gap: 6, border: "1px solid #D3CEB9", background: "#FBF9F1", color: "#5B6670", borderRadius: 7, padding: "8px 13px", fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace", cursor: "pointer" },
+  journalMicBtnActive: { background: "#B0483D", color: "#FBF9F1", borderColor: "#B0483D" },
+  journalRecordingHint: { fontSize: 11.5, color: "#B0483D", marginTop: 6, fontFamily: "'IBM Plex Mono', monospace" },
 };

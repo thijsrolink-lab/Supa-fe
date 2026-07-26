@@ -47,6 +47,18 @@ create table if not exists public.photos (
   created_at timestamptz default now()
 );
 
+-- Verslagje per week: getypt of ingesproken (spraak-naar-tekst gebeurt in de
+-- browser, hier komt alleen de resulterende tekst binnen).
+create table if not exists public.journal_entries (
+  id uuid primary key default gen_random_uuid(),
+  child_id uuid references public.children(id) on delete cascade not null,
+  week int not null,
+  text text not null default '',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique (child_id, week)
+);
+
 -- Storage-bucket voor foto's (privé — alleen toegankelijk via signed URLs voor
 -- de eigenaar, zie de policies hieronder).
 insert into storage.buckets (id, name, public)
@@ -58,6 +70,7 @@ alter table public.children enable row level security;
 alter table public.growth_entries enable row level security;
 alter table public.siblings enable row level security;
 alter table public.photos enable row level security;
+alter table public.journal_entries enable row level security;
 
 -- Iedereen kan alleen het eigen gezin zien/bewerken.
 create policy "own family" on public.families
@@ -72,6 +85,22 @@ create policy "own siblings" on public.siblings
   with check (family_id in (select id from public.families where user_id = auth.uid()));
 
 create policy "own photos" on public.photos
+  for all using (
+    child_id in (
+      select c.id from public.children c
+      join public.families f on c.family_id = f.id
+      where f.user_id = auth.uid()
+    )
+  )
+  with check (
+    child_id in (
+      select c.id from public.children c
+      join public.families f on c.family_id = f.id
+      where f.user_id = auth.uid()
+    )
+  );
+
+create policy "own journal entries" on public.journal_entries
   for all using (
     child_id in (
       select c.id from public.children c
