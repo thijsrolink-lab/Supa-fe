@@ -12,6 +12,11 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
       ? existingFamily.children.map(c => ({ id: c.id, name: c.name, birth_date: c.birth_date || "" }))
       : [{ id: null, name: "", birth_date: "" }]
   );
+  const [siblings, setSiblings] = useState(
+    existingFamily?.siblings?.length
+      ? existingFamily.siblings.map(s => ({ id: s.id, name: s.name }))
+      : []
+  );
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -20,6 +25,12 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
   };
   const addChild = () => setChildren(prev => [...prev, { id: null, name: "", birth_date: "" }]);
   const removeChild = (i) => setChildren(prev => prev.filter((_, idx) => idx !== i));
+
+  const updateSibling = (i, value) => {
+    setSiblings(prev => prev.map((s, idx) => idx === i ? { ...s, name: value } : s));
+  };
+  const addSibling = () => setSiblings(prev => [...prev, { id: null, name: "" }]);
+  const removeSibling = (i) => setSiblings(prev => prev.filter((_, idx) => idx !== i));
 
   const submit = async (e) => {
     e.preventDefault();
@@ -63,6 +74,23 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
           await supabase.from("children").update({ name: c.name, birth_date: c.birth_date || null }).eq("id", c.id);
         } else {
           await supabase.from("children").insert({ family_id: familyId, name: c.name, birth_date: c.birth_date || null });
+        }
+      }
+
+      // Upsert siblings (name-only, not tracked)
+      const cleanSiblings = siblings.map(s => ({ ...s, name: s.name.trim() })).filter(s => s.name);
+      const existingSiblingIds = (existingFamily?.siblings || []).map(s => s.id);
+      const keptSiblingIds = cleanSiblings.filter(s => s.id).map(s => s.id);
+      const removedSiblingIds = existingSiblingIds.filter(id => !keptSiblingIds.includes(id));
+
+      if (removedSiblingIds.length) {
+        await supabase.from("siblings").delete().in("id", removedSiblingIds);
+      }
+      for (const s of cleanSiblings) {
+        if (s.id) {
+          await supabase.from("siblings").update({ name: s.name }).eq("id", s.id);
+        } else {
+          await supabase.from("siblings").insert({ family_id: familyId, name: s.name });
         }
       }
 
@@ -124,6 +152,26 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
             <Plus size={14} /> Nog een kind toevoegen
           </button>
 
+          <div style={styles.sectionLabel}>Broers/zussen (geen eigen groeiboekje)</div>
+          <p style={{ ...styles.p, fontSize: 12.5, marginTop: -6, marginBottom: 10 }}>
+            Alleen voor de tips en adviezen — bijvoorbeeld een ouder broertje of zusje
+            dat je niet zelf wilt bijhouden.
+          </p>
+          {siblings.map((s, i) => (
+            <div key={i} style={styles.memberRow}>
+              <input
+                value={s.name} onChange={(e) => updateSibling(i, e.target.value)}
+                style={{ ...styles.memberInput, flex: "1 1 100%" }} placeholder="Naam"
+              />
+              <button type="button" style={styles.removeBtn} onClick={() => removeSibling(i)} aria-label="Verwijder broer/zus">
+                <X size={14} />
+              </button>
+            </div>
+          ))}
+          <button type="button" style={styles.addRowBtn} onClick={addSibling}>
+            <Plus size={14} /> Broer/zus toevoegen
+          </button>
+
           {error && <div style={{ ...styles.saveMsg, color: "#B0483D" }}>{error}</div>}
 
           <button className="gb-stampbtn" type="submit" disabled={busy} style={{ ...styles.stampBtn, justifyContent: "center", width: "100%" }}>
@@ -132,8 +180,8 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
         </form>
 
         <div style={styles.chartFootnote}>
-          Broers/zussen worden automatisch afgeleid: als je meerdere kinderen invult, zie je bij elk kind
-          de anderen terug in de "omgang met broer/zus"-tips.
+          Bij meerdere kinderen zie je bij elk kind de anderen (en de ingevulde broers/zussen)
+          terug in de "omgang met broer/zus"-tips.
         </div>
       </div>
     </div>

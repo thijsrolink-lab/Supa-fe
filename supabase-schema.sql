@@ -26,15 +26,29 @@ create table if not exists public.growth_entries (
   unique (child_id, week)
 );
 
+-- Broers/zussen: alleen een naam, geen eigen groeiboekje/tracker. Worden alleen
+-- gebruikt om de "omgang met broer/zus"-tips te personaliseren.
+create table if not exists public.siblings (
+  id uuid primary key default gen_random_uuid(),
+  family_id uuid references public.families(id) on delete cascade not null,
+  name text not null,
+  created_at timestamptz default now()
+);
+
 alter table public.families enable row level security;
 alter table public.children enable row level security;
 alter table public.growth_entries enable row level security;
+alter table public.siblings enable row level security;
 
 -- Iedereen kan alleen het eigen gezin zien/bewerken.
 create policy "own family" on public.families
   for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 create policy "own children" on public.children
+  for all using (family_id in (select id from public.families where user_id = auth.uid()))
+  with check (family_id in (select id from public.families where user_id = auth.uid()));
+
+create policy "own siblings" on public.siblings
   for all using (family_id in (select id from public.families where user_id = auth.uid()))
   with check (family_id in (select id from public.families where user_id = auth.uid()));
 

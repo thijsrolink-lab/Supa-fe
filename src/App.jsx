@@ -68,7 +68,7 @@ export default function App() {
     setFamily(undefined);
     const { data: fam, error } = await supabase
       .from("families")
-      .select("id, father_name, mother_name, children(id, name, birth_date)")
+      .select("id, father_name, mother_name, children(id, name, birth_date), siblings(id, name)")
       .eq("user_id", session.user.id)
       .maybeSingle();
     if (error || !fam) {
@@ -107,7 +107,10 @@ export default function App() {
 
   const children = family.children;
   const activeChild = children.find(c => c.id === selectedChildId) || children[0];
-  const siblingNames = children.filter(c => c.id !== activeChild.id).map(c => c.name);
+  const siblingNames = [
+    ...children.filter(c => c.id !== activeChild.id).map(c => c.name),
+    ...(family.siblings || []).map(s => s.name),
+  ];
   const partnerName = family.mother_name || family.father_name || null;
 
   return (
