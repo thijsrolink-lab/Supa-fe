@@ -247,3 +247,146 @@ const STAGES = [
 
 export { STAGES };
 
+// ---------- Broer/zus-tips: afhankelijk van babyfase én leeftijd van broer/zus ----------
+// 5 bredere babyfases (in plaats van de 14 fijnmazige stages hierboven) gekruist met
+// 4 leeftijdscategorieën van de broer/zus, plus "onbekend" als er geen geboortedatum is.
+export const SIBLING_PHASES = [
+  { id: "newborn", start: 0, end: 4 },
+  { id: "early", start: 5, end: 12 },
+  { id: "mid", start: 13, end: 24 },
+  { id: "late", start: 25, end: 36 },
+  { id: "toddler", start: 37, end: 52 },
+];
+
+export function siblingPhaseForWeek(week) {
+  return (SIBLING_PHASES.find(p => week >= p.start && week <= p.end) || SIBLING_PHASES[0]).id;
+}
+
+export function siblingAgeCategory(birthDateStr, today = new Date()) {
+  if (!birthDateStr) return "onbekend";
+  const ageYears = (today - new Date(birthDateStr)) / (1000 * 60 * 60 * 24 * 365.25);
+  if (ageYears < 3) return "peuter";
+  if (ageYears < 6) return "kleuter";
+  if (ageYears < 12) return "schoolkind";
+  return "tiener";
+}
+
+export const SIBLING_TIPS = {
+  newborn: {
+    peuter: [
+      "Peuters snappen nog niet goed wat er verandert; laat {sibling} vooral merken dat de dagelijkse routine (eten, slapen, knuffels) hetzelfde blijft.",
+      "Een eigen 'grote broer/zus'-cadeautje bij de geboorte kan het moment ook van {sibling} maken.",
+    ],
+    kleuter: [
+      "Leg in simpele taal uit waarom {kind} zoveel slaapt en huilt — kleuters vragen graag concreet 'waarom'.",
+      "Betrek {sibling} bij kleine klusjes zoals een luier aangeven; op deze leeftijd voelt 'helpen' al volwassen.",
+    ],
+    schoolkind: [
+      "Schoolkinderen kunnen al goed verwoorden wat ze voelen; vraag {sibling} gericht hoe het is om nu broer/zus te zijn.",
+      "Plan een vast moment voor een verhaaltje of huiswerk samen, zodat de drukte rond {kind} niet meteen ten koste gaat van die aandacht.",
+    ],
+    tiener: [
+      "Tieners hebben vaak meer aan erkenning dan aan hulp vragen; check af en toe hoe {sibling} het echt vindt, zonder te pushen.",
+      "Geef {sibling} de ruimte om er nog niet meteen enthousiast over te zijn — een nieuwe baby verstoort ook tienerleven (privacy, rust).",
+    ],
+    onbekend: [
+      "Laat {sibling} op eigen tempo kennismaken, zonder te verplichten de baby vast te houden.",
+      "Houd de vertrouwde dagelijkse routine van {sibling} zoveel mogelijk hetzelfde.",
+    ],
+  },
+  early: {
+    peuter: [
+      "Peuters kunnen jaloers reageren op knuffelmomenten; geef {sibling} bewust ook fysieke aandacht op schoot.",
+      "Korte, voorspelbare momentjes samen (liedje, boekje) werken beter dan lange uitleg op deze leeftijd.",
+    ],
+    kleuter: [
+      "Kleuters spelen graag 'baby na' — laat {sibling} gerust meedoen met (nep-)verzorgen onder toezicht.",
+      "Beloon rustig gedrag rond {kind} met aandacht, in plaats van vooral te corrigeren als het misgaat.",
+    ],
+    schoolkind: [
+      "Schoolkinderen kunnen al een taakje aan, zoals zelf een speeltje voor {kind} uitzoeken of vasthouden tijdens het voeden.",
+      "Vraag naar school of vriendjes als vast gespreksonderwerp, zodat niet alles om {kind} draait.",
+    ],
+    tiener: [
+      "Heel kort en onder toezicht iets van 'oppas'-verantwoordelijkheid geven kan een tiener als blijk van vertrouwen ervaren.",
+      "Blijf oude afspraken (uitjes, hobby's) van {sibling} zoveel mogelijk gewoon doorzetten.",
+    ],
+    onbekend: [
+      "Plan bewust een moment alleen met {sibling}, al is het kort.",
+      "Betrek {sibling} bij kleine, veilige taken rond de zorg voor {kind}.",
+    ],
+  },
+  mid: {
+    peuter: [
+      "Nu {kind} meer reageert (lachen, grijpen) kan {sibling} trots zijn dat die al reactie oproept — benoem dat hardop.",
+      "Peuters kunnen fysiek nog onhandig zijn; blijf toezicht houden bij dichtbij spelen.",
+    ],
+    kleuter: [
+      "Kleuters kunnen al kleine 'spelletjes' doen zoals kiekeboe met {kind} — leuk voor allebei.",
+      "Leg uit dat {kind} nog niet kan praten of spelen zoals {sibling} gewend is, zodat de verwachtingen kloppen.",
+    ],
+    schoolkind: [
+      "Rond de bijvoeding kan {sibling} al meehelpen met een hapje geven, onder toezicht.",
+      "Blijf oog houden op jaloezie nu de aandacht rond eten meer naar {kind} verschuift.",
+    ],
+    tiener: [
+      "Een tiener kan de ontwikkeling van {kind} nu echt interessant gaan vinden — betrek {sibling} actief als die dat wil.",
+      "Forceer geen betrokkenheid; sommige tieners houden liever meer afstand, en dat is ook prima.",
+    ],
+    onbekend: [
+      "Reageer merkbaar enthousiast als {kind} reageert op {sibling} — dat versterkt de band.",
+      "Blijf specifieke, ongedeelde aandacht geven aan {sibling}, los van de baby.",
+    ],
+  },
+  late: {
+    peuter: [
+      "{kind} kan nu kruipen en spullen pakken; help {sibling} om eigen speelgoed op een hogere plek te bewaren.",
+      "Peuters kunnen boos worden als speelgoed 'afgepakt' wordt; leer een simpele regel zoals 'om de beurt'.",
+    ],
+    kleuter: [
+      "Kleuters kunnen goed meedenken over veiligheid ('dit zetten we hoog, want {kind} kan er nu bij') — betrek {sibling} erbij.",
+      "Vier kleine mijlpalen van {kind} samen met {sibling}, zodat het ook hun succes voelt.",
+    ],
+    schoolkind: [
+      "Schoolkinderen kunnen al even 'oppassen' terwijl jij vlakbij bent, bijvoorbeeld tijdens het koken.",
+      "Blijf vragen naar hun eigen dag of prestaties, niet alleen over {kind}.",
+    ],
+    tiener: [
+      "Tieners vinden het soms leuk om {kind} iets te 'leren' (geluidjes, bewegingen) — een fijne manier om verbinding te maken.",
+      "Respecteer als {sibling} behoefte heeft aan een eigen rustige plek, weg van babydrukte.",
+    ],
+    onbekend: [
+      "Betrek {sibling} bij het vieren van kleine mijlpalen van {kind}.",
+      "Zorg voor duidelijke afspraken over spullen en ruimte nu {kind} mobieler wordt.",
+    ],
+  },
+  toddler: {
+    peuter: [
+      "Nu {kind} misschien gaat lopen, kan het spannend zijn dat de baby 'overal' komt — blijf geduldig herhalen wat wel/niet mag.",
+      "Betrek {sibling} bij het vieren van de eerste verjaardag, bijvoorbeeld met een eigen taakje.",
+    ],
+    kleuter: [
+      "Kleuters kunnen goed meehelpen bij het voorbereiden van het verjaardagsfeest van {kind} — geef een concrete rol.",
+      "Blijf ook rond het feest een moment alleen met {sibling} inplannen, zodat het niet alléén om {kind} draait.",
+    ],
+    schoolkind: [
+      "Schoolkinderen vertellen soms trots op school over hun broertje/zusje — vraag ernaar, het versterkt de band.",
+      "Betrek {sibling} bij het terugkijken op het jaar: wat vond die het leukst aan grote broer/zus zijn?",
+    ],
+    tiener: [
+      "Een tiener kan nu al oprecht gehecht zijn geraakt — een mooi moment om dat te benoemen bij de eerste verjaardag.",
+      "Check of {sibling} zich nog gezien voelt nu het 'nieuwe' van de baby wat is afgezwakt — soms zakt aandacht juist té veel weg.",
+    ],
+    onbekend: [
+      "Betrek {sibling} bij de voorbereiding van de eerste verjaardag van {kind}.",
+      "Blik samen met {sibling} terug op het jaar: wat vond die er leuk aan?",
+    ],
+  },
+};
+
+export function getSiblingTips(week, birthDateStr) {
+  const phase = siblingPhaseForWeek(week);
+  const category = siblingAgeCategory(birthDateStr);
+  return SIBLING_TIPS[phase][category] || SIBLING_TIPS[phase].onbekend;
+}
+

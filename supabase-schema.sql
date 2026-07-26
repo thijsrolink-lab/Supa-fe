@@ -32,6 +32,7 @@ create table if not exists public.siblings (
   id uuid primary key default gen_random_uuid(),
   family_id uuid references public.families(id) on delete cascade not null,
   name text not null,
+  birth_date date,
   created_at timestamptz default now()
 );
 

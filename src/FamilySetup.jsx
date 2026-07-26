@@ -14,7 +14,7 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
   );
   const [siblings, setSiblings] = useState(
     existingFamily?.siblings?.length
-      ? existingFamily.siblings.map(s => ({ id: s.id, name: s.name }))
+      ? existingFamily.siblings.map(s => ({ id: s.id, name: s.name, birth_date: s.birth_date || "" }))
       : []
   );
   const [error, setError] = useState("");
@@ -26,10 +26,10 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
   const addChild = () => setChildren(prev => [...prev, { id: null, name: "", birth_date: "" }]);
   const removeChild = (i) => setChildren(prev => prev.filter((_, idx) => idx !== i));
 
-  const updateSibling = (i, value) => {
-    setSiblings(prev => prev.map((s, idx) => idx === i ? { ...s, name: value } : s));
+  const updateSibling = (i, field, value) => {
+    setSiblings(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: value } : s));
   };
-  const addSibling = () => setSiblings(prev => [...prev, { id: null, name: "" }]);
+  const addSibling = () => setSiblings(prev => [...prev, { id: null, name: "", birth_date: "" }]);
   const removeSibling = (i) => setSiblings(prev => prev.filter((_, idx) => idx !== i));
 
   const submit = async (e) => {
@@ -88,9 +88,9 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
       }
       for (const s of cleanSiblings) {
         if (s.id) {
-          await supabase.from("siblings").update({ name: s.name }).eq("id", s.id);
+          await supabase.from("siblings").update({ name: s.name, birth_date: s.birth_date || null }).eq("id", s.id);
         } else {
-          await supabase.from("siblings").insert({ family_id: familyId, name: s.name });
+          await supabase.from("siblings").insert({ family_id: familyId, name: s.name, birth_date: s.birth_date || null });
         }
       }
 
@@ -154,14 +154,18 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
 
           <div style={styles.sectionLabel}>Broers/zussen (geen eigen groeiboekje)</div>
           <p style={{ ...styles.p, fontSize: 12.5, marginTop: -6, marginBottom: 10 }}>
-            Alleen voor de tips en adviezen — bijvoorbeeld een ouder broertje of zusje
-            dat je niet zelf wilt bijhouden.
+            Alleen voor de tips en adviezen. Geboortedatum is optioneel, maar maakt de
+            tips leeftijdspassend (peuter/kleuter/schoolkind/tiener).
           </p>
           {siblings.map((s, i) => (
             <div key={i} style={styles.memberRow}>
               <input
-                value={s.name} onChange={(e) => updateSibling(i, e.target.value)}
-                style={{ ...styles.memberInput, flex: "1 1 100%" }} placeholder="Naam"
+                value={s.name} onChange={(e) => updateSibling(i, "name", e.target.value)}
+                style={styles.memberInput} placeholder="Naam"
+              />
+              <input
+                type="date" value={s.birth_date} onChange={(e) => updateSibling(i, "birth_date", e.target.value)}
+                style={styles.memberDateInput}
               />
               <button type="button" style={styles.removeBtn} onClick={() => removeSibling(i)} aria-label="Verwijder broer/zus">
                 <X size={14} />

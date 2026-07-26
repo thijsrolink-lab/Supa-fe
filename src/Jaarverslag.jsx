@@ -12,7 +12,7 @@ function renderText(str, vars) {
     .replace(/\{partner\}/g, vars.partner || "je partner");
 }
 
-export default function Jaarverslag({ child, siblingNames, partnerName, onBack }) {
+export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
   const [entries, setEntries] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [urls, setUrls] = useState({});
@@ -37,7 +37,7 @@ export default function Jaarverslag({ child, siblingNames, partnerName, onBack }
     })();
   }, [child.id]);
 
-  const vars = { kind: child.name, sibling: (siblingNames || []).join(" en "), partner: partnerName };
+  const vars = { kind: child.name, sibling: (siblings || []).map(s => s.name).join(" en "), partner: partnerName };
   const weightData = useMemo(() => buildChartData(52, WEIGHT_REF_KG, entries, "weight"), [entries]);
   const lengthData = useMemo(() => buildChartData(52, LENGTH_REF_CM, entries, "length"), [entries]);
 

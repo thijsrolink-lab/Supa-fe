@@ -73,7 +73,7 @@ export default function App() {
     setFamily(undefined);
     const { data: fam, error } = await supabase
       .from("families")
-      .select("id, father_name, mother_name, children(id, name, birth_date), siblings(id, name)")
+      .select("id, father_name, mother_name, children(id, name, birth_date), siblings(id, name, birth_date)")
       .eq("user_id", session.user.id)
       .maybeSingle();
     if (error || !fam) {
@@ -112,9 +112,9 @@ export default function App() {
 
   const children = family.children;
   const activeChild = children.find(c => c.id === selectedChildId) || children[0];
-  const siblingNames = [
-    ...children.filter(c => c.id !== activeChild.id).map(c => c.name),
-    ...(family.siblings || []).map(s => s.name),
+  const siblings = [
+    ...children.filter(c => c.id !== activeChild.id).map(c => ({ name: c.name, birth_date: c.birth_date })),
+    ...(family.siblings || []).map(s => ({ name: s.name, birth_date: s.birth_date })),
   ];
   const partnerName = family.mother_name || family.father_name || null;
 
@@ -124,7 +124,7 @@ export default function App() {
         <GlobalFonts />
         <Jaarverslag
           child={activeChild}
-          siblingNames={siblingNames}
+          siblings={siblings}
           partnerName={partnerName}
           onBack={() => setShowReport(false)}
         />
@@ -137,7 +137,7 @@ export default function App() {
       <GlobalFonts />
       <Tracker
         child={activeChild}
-        siblingNames={siblingNames}
+        siblings={siblings}
         partnerName={partnerName}
         childOptions={children}
         userId={session.user.id}

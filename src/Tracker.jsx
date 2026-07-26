@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { Square, CheckSquare, Stamp, Ruler, Weight, Plus, ChevronLeft, ChevronRight, Users, Settings, LogOut, BookOpen } from "lucide-react";
 import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
-import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData } from "./content.js";
+import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData, getSiblingTips } from "./content.js";
 import PhotoPanel from "./PhotoPanel.jsx";
 
 function weekFromBirth(birthDateStr) {
@@ -31,7 +31,7 @@ function MeetpuntDot({ cx, cy, payload, color }) {
   return <circle cx={cx} cy={cy} r={4} fill={color} stroke="#FBF9F1" strokeWidth={1.5} />;
 }
 
-export default function Tracker({ child, siblingNames, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, userId, onOpenReport }) {
+export default function Tracker({ child, siblings, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, userId, onOpenReport }) {
   const [entries, setEntries] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [loaded, setLoaded] = useState(false);
@@ -64,8 +64,8 @@ export default function Tracker({ child, siblingNames, partnerName, childOptions
   }, [child.id, child.birth_date]);
 
   const stage = useMemo(() => STAGES.find(s => viewWeek >= s.start && viewWeek <= s.end) || STAGES[0], [viewWeek]);
-  const siblingText = siblingNames && siblingNames.length ? siblingNames.join(" en ") : "";
-  const vars = { kind: child.name, sibling: siblingText, partner: partnerName };
+  const siblingNames = (siblings || []).map(s => s.name).join(" en ");
+  const vars = { kind: child.name, sibling: siblingNames, partner: partnerName };
 
   const addEntry = async () => {
     if (!weightInput && !lengthInput) return;
@@ -193,20 +193,26 @@ export default function Tracker({ child, siblingNames, partnerName, childOptions
               </ul>
             </div>
 
-            {siblingText && (
+            {siblings && siblings.length > 0 && (
               <>
                 <div style={styles.rule} />
-                <div style={styles.siblingBox}>
-                  <div style={styles.siblingLabel}><Users size={13} /> Omgang met {siblingText}</div>
-                  <ul style={styles.checklist}>
-                    {stage.siblingTips.map((t, i) => (
-                      <li key={i} style={styles.checkItem}>
-                        <Square size={13} color="#3F6E8C" style={{ flexShrink: 0, marginTop: 3 }} />
-                        <span>{renderText(t, vars)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {siblings.map((sib, si) => {
+                  const tips = getSiblingTips(viewWeek, sib.birth_date);
+                  const sibVars = { kind: child.name, sibling: sib.name, partner: partnerName };
+                  return (
+                    <div key={si} style={{ ...styles.siblingBox, marginBottom: si < siblings.length - 1 ? 10 : 0 }}>
+                      <div style={styles.siblingLabel}><Users size={13} /> Omgang met {sib.name}</div>
+                      <ul style={styles.checklist}>
+                        {tips.map((t, i) => (
+                          <li key={i} style={styles.checkItem}>
+                            <Square size={13} color="#3F6E8C" style={{ flexShrink: 0, marginTop: 3 }} />
+                            <span>{renderText(t, sibVars)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                })}
               </>
             )}
           </div>
