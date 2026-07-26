@@ -58,6 +58,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
   const [saveMsg, setSaveMsg] = useState("");
   const [activeTopic, setActiveTopic] = useState(null);
   const [activeTab, setActiveTab] = useState("vandaag");
+  const [groeiSubTab, setGroeiSubTab] = useState("meting");
 
   const currentWeek = weekFromBirth(child.birth_date);
   const countdown = daysUntilBirth(child.birth_date);
@@ -279,9 +280,28 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
         {/* ---- Tab: Groei ---- */}
         {activeTab === "groei" && (
           <>
-            <div style={{ ...styles.page, marginBottom: 14 }}>
-              <MilestonesPanel childId={child.id} />
+            <div style={styles.subTabRow}>
+              <button
+                style={{ ...styles.subTab, ...(groeiSubTab === "meting" ? styles.subTabActive : {}) }}
+                onClick={() => setGroeiSubTab("meting")}
+              >
+                Meting
+              </button>
+              <button
+                style={{ ...styles.subTab, ...(groeiSubTab === "mijlpalen" ? styles.subTabActive : {}) }}
+                onClick={() => setGroeiSubTab("mijlpalen")}
+              >
+                Mijlpalen
+              </button>
             </div>
+
+            {groeiSubTab === "mijlpalen" && (
+              <div style={styles.page}>
+                <MilestonesPanel childId={child.id} />
+              </div>
+            )}
+
+            {groeiSubTab === "meting" && (
             <div key={viewWeek} className="gb-fade">
             <div style={styles.page}>
               <div style={styles.sectionLabel}>Meting toevoegen — week {viewWeek}</div>
@@ -341,6 +361,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
               </div>
             </div>
             </div>
+            )}
           </>
         )}
 

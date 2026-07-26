@@ -144,6 +144,11 @@ export const styles = {
   milestoneLabel: { fontSize: 14, color: "#1E2530", flex: 1 },
   milestoneLabelDone: { color: "#6B7685", textDecoration: "line-through" },
   milestoneDate: { fontSize: 11.5, color: "#0FB8A6", fontWeight: 600, flexShrink: 0 },
+
+  // ---- Sub-tabs within a main tab (e.g. Groei: Meting / Mijlpalen) ----
+  subTabRow: { display: "flex", gap: 6, marginBottom: 14, background: "#EDF1F3", borderRadius: 12, padding: 4 },
+  subTab: { flex: 1, border: "none", background: "transparent", color: "#6B7685", fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 13, padding: "8px 10px", borderRadius: 9, cursor: "pointer" },
+  subTabActive: { background: "#FFFFFF", color: "#1E2530", boxShadow: "0 1px 2px rgba(30,42,51,0.08)" },
 };
 
 export const COLORS = COLOR;
