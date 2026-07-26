@@ -35,11 +35,11 @@ export const styles = {
   noteLabel: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: "0.07em", textTransform: "uppercase", color: "#B0483D", marginBottom: 11, fontWeight: 600 },
   siblingBox: { background: "#EAF0F3", border: "1px dashed #9FBAC9", borderRadius: 9, padding: "15px 17px" },
   siblingLabel: { display: "flex", alignItems: "center", gap: 6, fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: "0.07em", textTransform: "uppercase", color: "#3F6E8C", marginBottom: 11, fontWeight: 600 },
-  formRow: { display: "flex", gap: 22, flexWrap: "wrap", marginBottom: 14 },
-  formField: { display: "flex", alignItems: "baseline", gap: 6, borderBottom: "1.5px solid #C9C4AD", paddingBottom: 7, flex: "1 1 200px" },
+  formRow: { display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 14 },
+  formField: { display: "flex", alignItems: "center", gap: 7, borderBottom: "1.5px solid #C9C4AD", paddingBottom: 8, flex: "1 1 140px", minWidth: 0 },
   formFieldLabel: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#5B6670", flexShrink: 0 },
-  formInput: { border: "none", background: "transparent", flex: 1, fontFamily: "'IBM Plex Mono', monospace", fontSize: 16, color: "#1E2A33", textAlign: "right", minWidth: 40, fontVariantNumeric: "tabular-nums" },
-  formUnit: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#8A8368" },
+  formInput: { border: "none", background: "transparent", flex: 1, minWidth: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: 16, color: "#1E2A33", textAlign: "right", fontVariantNumeric: "tabular-nums" },
+  formUnit: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#8A8368", flexShrink: 0 },
   stampBtn: { display: "flex", alignItems: "center", gap: 6, border: "1px solid #2F6F62", background: "transparent", color: "#2F6F62", borderRadius: 7, padding: "9px 16px", fontSize: 13.5, fontFamily: "'IBM Plex Mono', monospace", fontWeight: 500, cursor: "pointer" },
   saveMsg: { fontSize: 12, fontFamily: "'IBM Plex Mono', monospace", color: "#2F6F62", marginTop: 9 },
   chartsCol: { display: "flex", flexDirection: "column", gap: 24, marginTop: 20 },
@@ -65,12 +65,6 @@ export const styles = {
   iconBtn: { border: "1px solid #D3CEB9", background: "#FBF9F1", borderRadius: 7, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#5B6670" },
 
   // ---- Saved measurements list ----
-  entryList: { display: "flex", flexDirection: "column", gap: 1, border: "1px solid #E3DFCB", borderRadius: 8, overflow: "hidden" },
-  entryRow: { display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: "#F7F4E9", fontSize: 13 },
-  entryWeek: { color: "#8A8368", fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, minWidth: 46, flexShrink: 0 },
-  entryVal: { fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#1E2A33", flex: 1 },
-  entryDel: { border: "none", background: "transparent", color: "#B0483D", cursor: "pointer", padding: 4, display: "flex", alignItems: "center", flexShrink: 0, borderRadius: 5 },
-
   // ---- Photos ----
   photoThumbWrap: { position: "relative", width: 64, height: 64, flexShrink: 0 },
   photoThumb: { width: 64, height: 64, objectFit: "cover", borderRadius: 8, border: "1px solid #D3CEB9", background: "#E9E5D5" },

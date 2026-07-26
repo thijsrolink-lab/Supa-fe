@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Square, CheckSquare, Stamp, Ruler, Weight, Plus, ChevronLeft, ChevronRight, Users, Settings, LogOut, Calendar, X, BookOpen } from "lucide-react";
+import { Square, CheckSquare, Stamp, Ruler, Weight, Plus, ChevronLeft, ChevronRight, Users, Settings, LogOut, BookOpen } from "lucide-react";
 import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
 import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData } from "./content.js";
@@ -38,7 +38,6 @@ export default function Tracker({ child, siblingNames, partnerName, childOptions
   const [viewWeek, setViewWeek] = useState(0);
   const [weightInput, setWeightInput] = useState("");
   const [lengthInput, setLengthInput] = useState("");
-  const [measureWeek, setMeasureWeek] = useState(0);
   const [saveMsg, setSaveMsg] = useState("");
 
   const currentWeek = weekFromBirth(child.birth_date);
@@ -46,7 +45,6 @@ export default function Tracker({ child, siblingNames, partnerName, childOptions
 
   useEffect(() => {
     setViewWeek(weekFromBirth(child.birth_date));
-    setMeasureWeek(weekFromBirth(child.birth_date));
     (async () => {
       setLoaded(false);
       const { data, error } = await supabase
@@ -71,10 +69,10 @@ export default function Tracker({ child, siblingNames, partnerName, childOptions
 
   const addEntry = async () => {
     if (!weightInput && !lengthInput) return;
-    const existing = entries.find(e => e.week === measureWeek);
+    const existing = entries.find(e => e.week === viewWeek);
     const row = {
       child_id: child.id,
-      week: measureWeek,
+      week: viewWeek,
       // Als je maar één veld invult, blijft de eerder opgeslagen andere waarde staan.
       weight: weightInput ? parseFloat(weightInput) : (existing?.weight ?? null),
       length: lengthInput ? parseFloat(lengthInput) : (existing?.length ?? null),
@@ -85,24 +83,14 @@ export default function Tracker({ child, siblingNames, partnerName, childOptions
     if (error) {
       setSaveMsg("Opslaan mislukt.");
     } else {
-      setEntries(prev => [...prev.filter(e => e.week !== measureWeek), row].sort((a, b) => a.week - b.week));
+      setEntries(prev => [...prev.filter(e => e.week !== viewWeek), row].sort((a, b) => a.week - b.week));
       setWeightInput("");
       setLengthInput("");
-      setSaveMsg(`Genoteerd bij week ${measureWeek}.`);
+      setSaveMsg(`Genoteerd bij week ${viewWeek}.`);
     }
     setTimeout(() => setSaveMsg(""), 2500);
   };
 
-  const deleteEntry = async (week) => {
-    const { error } = await supabase
-      .from("growth_entries")
-      .delete()
-      .eq("child_id", child.id)
-      .eq("week", week);
-    if (!error) {
-      setEntries(prev => prev.filter(e => e.week !== week));
-    }
-  };
 
   const weightData = useMemo(() => buildChartData(52, WEIGHT_REF_KG, entries, "weight"), [entries]);
   const lengthData = useMemo(() => buildChartData(52, LENGTH_REF_CM, entries, "length"), [entries]);
@@ -225,23 +213,7 @@ export default function Tracker({ child, siblingNames, partnerName, childOptions
 
           <div style={styles.rule} />
 
-          <div style={styles.sectionLabel}>Meting toevoegen</div>
-          <div style={styles.formRow}>
-            <div className="gb-formfield" style={styles.formField}>
-              <Calendar size={14} color="#5B6670" />
-              <span style={styles.formFieldLabel}>Week</span>
-              <input
-                className="gb-forminput" type="number" inputMode="numeric" min={0} max={52}
-                value={measureWeek}
-                onChange={(e) => {
-                  const v = parseInt(e.target.value, 10);
-                  setMeasureWeek(Number.isNaN(v) ? 0 : Math.max(0, Math.min(52, v)));
-                }}
-                style={styles.formInput}
-              />
-              <span style={styles.formUnit}>/ 52</span>
-            </div>
-          </div>
+          <div style={styles.sectionLabel}>Meting toevoegen — week {viewWeek}</div>
           <div style={styles.formRow}>
             <div className="gb-formfield" style={styles.formField}>
               <Weight size={14} color="#5B6670" />
@@ -258,24 +230,6 @@ export default function Tracker({ child, siblingNames, partnerName, childOptions
           </div>
           <button className="gb-stampbtn" style={styles.stampBtn} onClick={addEntry}><Plus size={14} /> Noteren</button>
           {saveMsg && <div style={styles.saveMsg}>{saveMsg}</div>}
-
-          {entries.length > 0 && (
-            <div style={{ marginTop: 18 }}>
-              <div style={styles.sectionLabel}>Opgeslagen metingen ({entries.length})</div>
-              <div style={styles.entryList}>
-                {entries.map((e) => (
-                  <div key={e.week} style={styles.entryRow}>
-                    <span className="gb-mono" style={styles.entryWeek}>wk {e.week}</span>
-                    <span className="gb-mono" style={styles.entryVal}>{e.weight != null ? `${e.weight} kg` : "—"}</span>
-                    <span className="gb-mono" style={styles.entryVal}>{e.length != null ? `${e.length} cm` : "—"}</span>
-                    <button style={styles.entryDel} onClick={() => deleteEntry(e.week)} aria-label={`Verwijder meting week ${e.week}`}>
-                      <X size={13} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           <div style={styles.chartsCol}>
             <div style={styles.chartBox}>
