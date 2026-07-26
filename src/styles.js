@@ -7,8 +7,8 @@ export const styles = {
   page: {
     background: "#FBF9F1",
     border: "1px solid #D3CEB9",
-    borderRadius: "0 10px 10px 10px",
-    padding: "26px 26px 30px",
+    borderRadius: 10,
+    padding: "22px 22px 26px",
     backgroundImage: "repeating-linear-gradient(#FBF9F1 0px, #FBF9F1 31px, #E9E5D5 32px)",
     boxShadow: "0 1px 2px rgba(30,42,51,0.04), 0 12px 28px -16px rgba(30,42,51,0.22)",
   },
@@ -82,4 +82,22 @@ export const styles = {
   journalMicBtn: { display: "flex", alignItems: "center", gap: 6, border: "1px solid #D3CEB9", background: "#FBF9F1", color: "#5B6670", borderRadius: 7, padding: "8px 13px", fontSize: 12.5, fontFamily: "'IBM Plex Mono', monospace", cursor: "pointer" },
   journalMicBtnActive: { background: "#B0483D", color: "#FBF9F1", borderColor: "#B0483D" },
   journalRecordingHint: { fontSize: 11.5, color: "#B0483D", marginTop: 6, fontFamily: "'IBM Plex Mono', monospace" },
+
+  // ---- Week header card (persistent across tabs) + bottom navigation ----
+  weekHeaderCard: {
+    background: "#FBF9F1", border: "1px solid #D3CEB9", borderRadius: 10, padding: "16px 18px",
+    marginBottom: 14, boxShadow: "0 1px 2px rgba(30,42,51,0.04), 0 8px 20px -14px rgba(30,42,51,0.18)",
+  },
+  bottomNav: {
+    position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 20,
+    display: "flex", background: "#FBF9F1", borderTop: "1px solid #D3CEB9",
+    paddingBottom: "env(safe-area-inset-bottom, 0px)",
+    boxShadow: "0 -2px 10px rgba(30,42,51,0.08)",
+  },
+  bottomNavBtn: {
+    flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+    border: "none", background: "transparent", color: "#8A8368", padding: "10px 4px 8px",
+    fontSize: 10.5, fontFamily: "'IBM Plex Mono', monospace", cursor: "pointer",
+  },
+  bottomNavBtnActive: { color: "#2F6F62", fontWeight: 600 },
 };
