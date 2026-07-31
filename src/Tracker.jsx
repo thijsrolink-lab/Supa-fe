@@ -48,7 +48,7 @@ function MeetpuntDot({ cx, cy, payload, color }) {
   return <circle cx={cx} cy={cy} r={4} fill={color} stroke="#FFFFFF" strokeWidth={1.5} />;
 }
 
-export default function Tracker({ child, siblings, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, familyId, myRole, myName, onOpenReport }) {
+export default function Tracker({ child, siblings, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, familyId, myRole, myName, onOpenReport, onOpenFamily }) {
   const [entries, setEntries] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [journalEntries, setJournalEntries] = useState([]);
@@ -149,8 +149,11 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
                   <button className="gb-dropdown-item" style={styles.dropdownItem} onClick={() => { setMenuOpen(false); onOpenReport(); }}>
                     <BookOpen size={14} /> Jaarverslag
                   </button>
+                  <button className="gb-dropdown-item" style={styles.dropdownItem} onClick={() => { setMenuOpen(false); onOpenFamily(); }}>
+                    <Users size={14} /> Gezin
+                  </button>
                   <button className="gb-dropdown-item" style={styles.dropdownItem} onClick={() => { setMenuOpen(false); onEditFamily(); }}>
-                    <Settings size={14} /> Gezin bewerken
+                    <Settings size={14} /> Instellingen
                   </button>
                   <button className="gb-dropdown-item" style={{ ...styles.dropdownItem, color: "#E4572E" }} onClick={() => { setMenuOpen(false); onLogout(); }}>
                     <LogOut size={14} /> Uitloggen

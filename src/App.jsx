@@ -5,6 +5,7 @@ import FamilySetup from "./FamilySetup.jsx";
 import Tracker from "./Tracker.jsx";
 import Jaarverslag from "./Jaarverslag.jsx";
 import ResetPassword from "./ResetPassword.jsx";
+import Gezin from "./Gezin.jsx";
 
 function GlobalFonts() {
   return (
@@ -61,6 +62,7 @@ export default function App() {
   const [selectedChildId, setSelectedChildId] = useState(null);
   const [editingFamily, setEditingFamily] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [showFamily, setShowFamily] = useState(false);
   const [recoveryMode, setRecoveryMode] = useState(false);
   const [inviteCodeFromUrl, setInviteCodeFromUrl] = useState(null);
   const [myRole, setMyRole] = useState(null);
@@ -174,6 +176,20 @@ export default function App() {
     );
   }
 
+  if (showFamily) {
+    return (
+      <>
+        <GlobalFonts />
+        <Gezin
+          child={activeChild}
+          myName={myName}
+          partnerName={partnerName}
+          onBack={() => setShowFamily(false)}
+        />
+      </>
+    );
+  }
+
   return (
     <>
       <GlobalFonts />
@@ -189,6 +205,7 @@ export default function App() {
         onEditFamily={() => setEditingFamily(true)}
         onLogout={() => supabase.auth.signOut()}
         onOpenReport={() => setShowReport(true)}
+        onOpenFamily={() => setShowFamily(true)}
       />
     </>
   );
