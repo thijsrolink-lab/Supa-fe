@@ -102,57 +102,57 @@ alter table public.journal_entries enable row level security;
 alter table public.milestones enable row level security;
 
 -- ---------- families: lezen/wijzigen mag elk lid van het gezin; aanmaken mag iedereen ----------
-drop policy if exists "own family" on public.families;
-drop policy if exists "members can view family" on public.families;
-drop policy if exists "members can update family" on public.families;
-drop policy if exists "authenticated can create family" on public.families;
+drop policy if exists own_family on public.families;
+drop policy if exists members_view_family on public.families;
+drop policy if exists members_update_family on public.families;
+drop policy if exists authenticated_create_family on public.families;
 
-create policy "authenticated can create family" on public.families
+create policy authenticated_create_family on public.families
   for insert with check (auth.uid() = user_id);
 
-create policy "members can view family" on public.families
+create policy members_view_family on public.families
   for select using (id in (select family_id from public.family_members where user_id = auth.uid()));
 
-create policy "members can update family" on public.families
+create policy members_update_family on public.families
   for update using (id in (select family_id from public.family_members where user_id = auth.uid()));
 
 -- ---------- family_members: je ziet de leden van je eigen gezin(nen) ----------
-drop policy if exists "view own memberships" on public.family_members;
-drop policy if exists "insert own membership" on public.family_members;
+drop policy if exists view_own_memberships on public.family_members;
+drop policy if exists insert_own_membership on public.family_members;
 
-create policy "view own memberships" on public.family_members
+create policy view_own_memberships on public.family_members
   for select using (
     user_id = auth.uid()
     or family_id in (select family_id from public.family_members where user_id = auth.uid())
   );
 
-create policy "insert own membership" on public.family_members
+create policy insert_own_membership on public.family_members
   for insert with check (user_id = auth.uid());
 
 -- ---------- family_invites: elke ingelogde gebruiker mag een code opzoeken/aanmaken ----------
 -- (een code zelf is niet gevoelig — het is puur een sleuteltje om lid te worden)
-drop policy if exists "authenticated can read invites" on public.family_invites;
-drop policy if exists "members can create invites" on public.family_invites;
+drop policy if exists authenticated_read_invites on public.family_invites;
+drop policy if exists members_create_invites on public.family_invites;
 
-create policy "authenticated can read invites" on public.family_invites
+create policy authenticated_read_invites on public.family_invites
   for select using (auth.role() = 'authenticated');
 
-create policy "members can create invites" on public.family_invites
+create policy members_create_invites on public.family_invites
   for insert with check (family_id in (select family_id from public.family_members where user_id = auth.uid()));
 
 -- ---------- children / siblings / growth / photos / journal / milestones: alle gezinsleden ----------
-drop policy if exists "own children" on public.children;
-create policy "family members children" on public.children
+drop policy if exists own_children on public.children;
+create policy family_members_children on public.children
   for all using (family_id in (select family_id from public.family_members where user_id = auth.uid()))
   with check (family_id in (select family_id from public.family_members where user_id = auth.uid()));
 
-drop policy if exists "own siblings" on public.siblings;
-create policy "family members siblings" on public.siblings
+drop policy if exists own_siblings on public.siblings;
+create policy family_members_siblings on public.siblings
   for all using (family_id in (select family_id from public.family_members where user_id = auth.uid()))
   with check (family_id in (select family_id from public.family_members where user_id = auth.uid()));
 
-drop policy if exists "own growth entries" on public.growth_entries;
-create policy "family members growth entries" on public.growth_entries
+drop policy if exists own_growth_entries on public.growth_entries;
+create policy family_members_growth_entries on public.growth_entries
   for all using (
     child_id in (
       select c.id from public.children c
@@ -166,8 +166,8 @@ create policy "family members growth entries" on public.growth_entries
     )
   );
 
-drop policy if exists "own photos" on public.photos;
-create policy "family members photos" on public.photos
+drop policy if exists own_photos on public.photos;
+create policy family_members_photos on public.photos
   for all using (
     child_id in (
       select c.id from public.children c
@@ -181,8 +181,8 @@ create policy "family members photos" on public.photos
     )
   );
 
-drop policy if exists "own journal entries" on public.journal_entries;
-create policy "family members journal entries" on public.journal_entries
+drop policy if exists own_journal_entries on public.journal_entries;
+create policy family_members_journal_entries on public.journal_entries
   for all using (
     child_id in (
       select c.id from public.children c
@@ -196,8 +196,8 @@ create policy "family members journal entries" on public.journal_entries
     )
   );
 
-drop policy if exists "own milestones" on public.milestones;
-create policy "family members milestones" on public.milestones
+drop policy if exists own_milestones on public.milestones;
+create policy family_members_milestones on public.milestones
   for all using (
     child_id in (
       select c.id from public.children c
@@ -212,11 +212,11 @@ create policy "family members milestones" on public.milestones
   );
 
 -- ---------- Storage: pad is nu {family_id}/{child_id}/bestand, toegankelijk voor alle gezinsleden ----------
-drop policy if exists "own photo files select" on storage.objects;
-drop policy if exists "own photo files insert" on storage.objects;
-drop policy if exists "own photo files delete" on storage.objects;
+drop policy if exists own_photo_files_select on storage.objects;
+drop policy if exists own_photo_files_insert on storage.objects;
+drop policy if exists own_photo_files_delete on storage.objects;
 
-create policy "family photo files select" on storage.objects
+create policy family_photo_files_select on storage.objects
   for select using (
     bucket_id = 'baby-photos'
     and (storage.foldername(name))[1] in (
@@ -224,7 +224,7 @@ create policy "family photo files select" on storage.objects
     )
   );
 
-create policy "family photo files insert" on storage.objects
+create policy family_photo_files_insert on storage.objects
   for insert with check (
     bucket_id = 'baby-photos'
     and (storage.foldername(name))[1] in (
@@ -232,7 +232,7 @@ create policy "family photo files insert" on storage.objects
     )
   );
 
-create policy "family photo files delete" on storage.objects
+create policy family_photo_files_delete on storage.objects
   for delete using (
     bucket_id = 'baby-photos'
     and (storage.foldername(name))[1] in (
