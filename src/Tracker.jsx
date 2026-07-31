@@ -15,7 +15,6 @@ const TABS = [
   { id: "vandaag", label: "Vandaag", icon: CalendarDays, color: "#0FB8A6" },
   { id: "groei", label: "Groei", icon: TrendingUp, color: "#FF7A59" },
   { id: "media", label: "Foto's & verslag", icon: Image, color: "#8B7FE0" },
-  { id: "jaarverslag", label: "Jaarverslag", icon: BookOpen, color: "#F5A524" },
 ];
 
 function weekFromBirth(birthDateStr) {
@@ -147,6 +146,9 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
               <>
                 <div style={styles.menuOverlay} onClick={() => setMenuOpen(false)} />
                 <div style={styles.dropdownMenu}>
+                  <button className="gb-dropdown-item" style={styles.dropdownItem} onClick={() => { setMenuOpen(false); onOpenReport(); }}>
+                    <BookOpen size={14} /> Jaarverslag
+                  </button>
                   <button className="gb-dropdown-item" style={styles.dropdownItem} onClick={() => { setMenuOpen(false); onEditFamily(); }}>
                     <Settings size={14} /> Gezin bewerken
                   </button>
@@ -446,7 +448,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
             <button
               key={t.id}
               style={{ ...styles.bottomNavBtn, ...(active ? { ...styles.bottomNavBtnActive, background: t.color } : {}) }}
-              onClick={() => (t.id === "jaarverslag" ? onOpenReport() : setActiveTab(t.id))}
+              onClick={() => setActiveTab(t.id)}
             >
               <Icon size={19} />
               <span>{t.label}</span>
