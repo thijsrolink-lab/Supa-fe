@@ -326,6 +326,10 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
 
             {groeiSubTab === "meting" && (
             <div key={viewWeek} className="gb-fade">
+            <div style={{ ...styles.page, marginBottom: 14, paddingTop: 16, paddingBottom: 16 }}>
+              <div style={styles.sectionLabel}>Hoe ging deze week?</div>
+              <WeekRating childId={child.id} week={viewWeek} />
+            </div>
             <div style={styles.page}>
               <div style={styles.sectionLabel}>Meting toevoegen — week {viewWeek}</div>
               <div style={styles.formRow}>
@@ -391,6 +395,10 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
         {/* ---- Tab: Foto's & verslag ---- */}
         {activeTab === "media" && (
           <div key={viewWeek} className="gb-fade">
+            <div style={{ ...styles.page, marginBottom: 14, paddingTop: 16, paddingBottom: 16 }}>
+              <div style={styles.sectionLabel}>Hoe ging deze week?</div>
+              <WeekRating childId={child.id} week={viewWeek} />
+            </div>
             <div style={styles.page}>
               <div style={styles.sectionLabel}>Foto's — week {viewWeek}</div>
               <PhotoPanel childId={child.id} familyId={familyId} week={viewWeek} photos={photos} onChanged={setPhotos} />
