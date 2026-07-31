@@ -152,6 +152,10 @@ export default function App() {
     myRole === "vader" ? (family.mother_name || null) :
     myRole === "moeder" ? (family.father_name || null) :
     (family.mother_name || family.father_name || null);
+  const myName =
+    myRole === "vader" ? (family.father_name || null) :
+    myRole === "moeder" ? (family.mother_name || null) :
+    null;
 
   if (showReport) {
     return (
@@ -161,6 +165,7 @@ export default function App() {
           child={activeChild}
           siblings={siblings}
           partnerName={partnerName}
+          myName={myName}
           onBack={() => setShowReport(false)}
         />
       </>
@@ -177,6 +182,7 @@ export default function App() {
         childOptions={children}
         familyId={family.id}
         myRole={myRole}
+        myName={myName}
         onSelectChild={setSelectedChildId}
         onEditFamily={() => setEditingFamily(true)}
         onLogout={() => supabase.auth.signOut()}

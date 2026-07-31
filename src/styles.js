@@ -117,6 +117,8 @@ export const styles = {
   journalMicBtn: { display: "flex", alignItems: "center", gap: 6, border: `1px solid ${COLOR.border}`, background: COLOR.card, color: COLOR.inkMuted, borderRadius: 12, padding: "9px 14px", fontSize: 12.5, fontWeight: 600, fontFamily: FONT_BODY, cursor: "pointer" },
   journalMicBtnActive: { background: COLOR.lavender, color: "#fff", borderColor: COLOR.lavender },
   journalRecordingHint: { fontSize: 11.5, color: COLOR.lavender, marginTop: 6, fontFamily: FONT_BODY, fontWeight: 600 },
+  journalOtherEntry: { background: COLOR.lavenderSoft, border: "1px solid #DCD6F7", borderRadius: 12, padding: "10px 13px", fontSize: 14, color: COLOR.ink },
+  journalAuthor: { fontSize: 11, fontWeight: 700, color: "#6C5FD1", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 },
 
   // ---- Week header card (persistent across tabs) + bottom navigation ----
   weekHeaderCard: {

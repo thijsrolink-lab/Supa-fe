@@ -84,11 +84,12 @@ create table if not exists public.photos (
 create table if not exists public.journal_entries (
   id uuid primary key default gen_random_uuid(),
   child_id uuid references public.children(id) on delete cascade not null,
+  user_id uuid references auth.users(id) on delete cascade,
   week int not null,
   text text not null default '',
   created_at timestamptz default now(),
   updated_at timestamptz default now(),
-  unique (child_id, week)
+  unique (child_id, week, user_id)
 );
 
 create table if not exists public.milestones (
@@ -196,19 +197,24 @@ create policy family_members_photos on public.photos
   );
 
 drop policy if exists own_journal_entries on public.journal_entries;
-create policy family_members_journal_entries on public.journal_entries
-  for all using (
-    child_id in (
-      select c.id from public.children c
-      where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
-    )
-  )
-  with check (
+drop policy if exists family_members_journal_entries on public.journal_entries;
+
+create policy family_members_read_journal on public.journal_entries
+  for select using (
     child_id in (
       select c.id from public.children c
       where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
     )
   );
+
+create policy own_journal_write on public.journal_entries
+  for insert with check (user_id = auth.uid());
+
+create policy own_journal_update on public.journal_entries
+  for update using (user_id = auth.uid());
+
+create policy own_journal_delete on public.journal_entries
+  for delete using (user_id = auth.uid());
 
 drop policy if exists own_milestones on public.milestones;
 create policy family_members_milestones on public.milestones

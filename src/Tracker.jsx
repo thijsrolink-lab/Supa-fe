@@ -48,7 +48,7 @@ function MeetpuntDot({ cx, cy, payload, color }) {
   return <circle cx={cx} cy={cy} r={4} fill={color} stroke="#FFFFFF" strokeWidth={1.5} />;
 }
 
-export default function Tracker({ child, siblings, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, familyId, myRole, onOpenReport }) {
+export default function Tracker({ child, siblings, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, familyId, myRole, myName, onOpenReport }) {
   const [entries, setEntries] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [journalEntries, setJournalEntries] = useState([]);
@@ -83,7 +83,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
       setPhotos(photoRows || []);
       const { data: journalRows } = await supabase
         .from("journal_entries")
-        .select("week, text")
+        .select("week, text, user_id")
         .eq("child_id", child.id)
         .order("week", { ascending: true });
       setJournalEntries(journalRows || []);
@@ -398,7 +398,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
               <div style={styles.rule} />
 
               <div style={styles.sectionLabel}>Verslagje — week {viewWeek}</div>
-              <JournalPanel childId={child.id} week={viewWeek} entries={journalEntries} onChanged={setJournalEntries} />
+              <JournalPanel childId={child.id} week={viewWeek} entries={journalEntries} onChanged={setJournalEntries} myName={myName} partnerName={partnerName} />
             </div>
           </div>
         )}

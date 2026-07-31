@@ -5,22 +5,25 @@ import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
 import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData } from "./content.js";
 
-export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
+export default function Jaarverslag({ child, siblings, partnerName, myName, onBack }) {
   const [entries, setEntries] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [journalEntries, setJournalEntries] = useState([]);
   const [urls, setUrls] = useState({});
   const [loaded, setLoaded] = useState(false);
+  const [myUserId, setMyUserId] = useState(null);
 
   useEffect(() => {
     (async () => {
       setLoaded(false);
+      const { data: userData } = await supabase.auth.getUser();
+      setMyUserId(userData.user?.id || null);
       const { data: g } = await supabase
         .from("growth_entries").select("week, weight, length").eq("child_id", child.id).order("week");
       const { data: p } = await supabase
         .from("photos").select("id, week, storage_path").eq("child_id", child.id).order("week");
       const { data: j } = await supabase
-        .from("journal_entries").select("week, text").eq("child_id", child.id).order("week");
+        .from("journal_entries").select("week, text, user_id").eq("child_id", child.id).order("week");
       setEntries(g || []);
       setPhotos(p || []);
       setJournalEntries(j || []);
@@ -102,7 +105,9 @@ export default function Jaarverslag({ child, siblings, partnerName, onBack }) {
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                     {stageNotes.map((n, ni) => (
                       <div key={ni} style={{ fontSize: 13, fontStyle: "italic", color: "#6B7685", borderLeft: "2px solid #E7EAF0", paddingLeft: 10 }}>
-                        "{n.text}" <span style={{ fontFamily: "'Inter', sans-serif", fontStyle: "normal", fontSize: 11 }}>— week {n.week}</span>
+                        "{n.text}" <span style={{ fontFamily: "'Inter', sans-serif", fontStyle: "normal", fontSize: 11 }}>
+                          — {n.user_id === myUserId ? (myName || "jij") : (partnerName || "partner")}, week {n.week}
+                        </span>
                       </div>
                     ))}
                   </div>
