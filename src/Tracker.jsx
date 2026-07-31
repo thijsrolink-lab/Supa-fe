@@ -15,6 +15,7 @@ const TABS = [
   { id: "vandaag", label: "Vandaag", icon: CalendarDays, color: "#0FB8A6" },
   { id: "groei", label: "Groei", icon: TrendingUp, color: "#FF7A59" },
   { id: "media", label: "Foto's & verslag", icon: Image, color: "#8B7FE0" },
+  { id: "jaarverslag", label: "Jaarverslag", icon: BookOpen, color: "#F5A524" },
 ];
 
 function weekFromBirth(birthDateStr) {
@@ -147,7 +148,6 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
             </div>
           ) : <div />}
           <div style={{ display: "flex", gap: 6 }}>
-            <button className="gb-navbtn" style={styles.iconBtn} onClick={onOpenReport} aria-label="Jaarverslag"><BookOpen size={15} /></button>
             <button className="gb-navbtn" style={styles.iconBtn} onClick={onEditFamily} aria-label="Gezin bewerken"><Settings size={15} /></button>
             <button className="gb-navbtn" style={styles.iconBtn} onClick={onLogout} aria-label="Uitloggen"><LogOut size={15} /></button>
           </div>
@@ -417,7 +417,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
             <button
               key={t.id}
               style={{ ...styles.bottomNavBtn, ...(active ? { ...styles.bottomNavBtnActive, background: t.color } : {}) }}
-              onClick={() => setActiveTab(t.id)}
+              onClick={() => (t.id === "jaarverslag" ? onOpenReport() : setActiveTab(t.id))}
             >
               <Icon size={19} />
               <span>{t.label}</span>
