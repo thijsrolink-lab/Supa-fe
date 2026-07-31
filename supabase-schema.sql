@@ -18,8 +18,21 @@ create table if not exists public.family_members (
   family_id uuid references public.families(id) on delete cascade not null,
   user_id uuid references auth.users(id) on delete cascade not null,
   role text not null default 'member',
+  parent_role text,
   created_at timestamptz default now(),
   primary key (family_id, user_id)
+);
+
+-- Weekbeoordeling: elke ouder beoordeelt onafhankelijk hoe de week ging.
+create table if not exists public.week_ratings (
+  id uuid primary key default gen_random_uuid(),
+  child_id uuid references public.children(id) on delete cascade not null,
+  user_id uuid references auth.users(id) on delete cascade not null,
+  week int not null,
+  rating int not null check (rating between 1 and 5),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique (child_id, user_id, week)
 );
 
 -- Uitnodigingscodes: de ene ouder genereert een code, de andere voert 'm in om
@@ -100,6 +113,7 @@ alter table public.siblings enable row level security;
 alter table public.photos enable row level security;
 alter table public.journal_entries enable row level security;
 alter table public.milestones enable row level security;
+alter table public.week_ratings enable row level security;
 
 -- ---------- families: lezen/wijzigen mag elk lid van het gezin; aanmaken mag iedereen ----------
 drop policy if exists own_family on public.families;
@@ -210,6 +224,33 @@ create policy family_members_milestones on public.milestones
       where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
     )
   );
+
+-- Iedereen in het gezin ziet elkaars weekbeoordelingen, maar mag alleen de eigen rij wijzigen.
+drop policy if exists family_members_week_ratings on public.week_ratings;
+create policy family_members_week_ratings on public.week_ratings
+  for select using (
+    child_id in (
+      select c.id from public.children c
+      where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
+    )
+  );
+
+drop policy if exists own_week_rating_write on public.week_ratings;
+create policy own_week_rating_write on public.week_ratings
+  for insert with check (user_id = auth.uid());
+
+drop policy if exists own_week_rating_update on public.week_ratings;
+create policy own_week_rating_update on public.week_ratings
+  for update using (user_id = auth.uid());
+
+drop policy if exists own_week_rating_delete on public.week_ratings;
+create policy own_week_rating_delete on public.week_ratings
+  for delete using (user_id = auth.uid());
+
+-- Elk gezinslid mag de eigen rol (vader/moeder) in family_members bijwerken.
+drop policy if exists update_own_parent_role on public.family_members;
+create policy update_own_parent_role on public.family_members
+  for update using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 -- ---------- Storage: pad is nu {family_id}/{child_id}/bestand, toegankelijk voor alle gezinsleden ----------
 drop policy if exists own_photo_files_select on storage.objects;

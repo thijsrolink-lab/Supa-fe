@@ -61,6 +61,7 @@ export default function App() {
   const [showReport, setShowReport] = useState(false);
   const [recoveryMode, setRecoveryMode] = useState(false);
   const [inviteCodeFromUrl, setInviteCodeFromUrl] = useState(null);
+  const [myRole, setMyRole] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -87,13 +88,14 @@ export default function App() {
     setFamily(undefined);
     const { data: membership, error: memberError } = await supabase
       .from("family_members")
-      .select("family_id")
+      .select("family_id, parent_role")
       .eq("user_id", session.user.id)
       .maybeSingle();
     if (memberError || !membership) {
       setFamily(null);
       return;
     }
+    setMyRole(membership.parent_role || null);
     const { data: fam, error } = await supabase
       .from("families")
       .select("id, father_name, mother_name, children(id, name, birth_date, gender), siblings(id, name, birth_date, gender)")
@@ -168,6 +170,7 @@ export default function App() {
         partnerName={partnerName}
         childOptions={children}
         familyId={family.id}
+        myRole={myRole}
         onSelectChild={setSelectedChildId}
         onEditFamily={() => setEditingFamily(true)}
         onLogout={() => supabase.auth.signOut()}

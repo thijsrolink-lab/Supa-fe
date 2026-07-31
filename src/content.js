@@ -473,3 +473,63 @@ export function getTopicTips(topicId, week) {
   return TOPIC_TIPS[phase][topicId] || [];
 }
 
+// ---------- Rol-specifieke tips (vader/moeder), ook per babyfase ----------
+export const PARENT_TIPS = {
+  newborn: {
+    vader: [
+      "Focus op praktische steun: eten regelen, bezoek afschermen, huishouden overnemen — dat is nu je grootste bijdrage.",
+      "Het is normaal als je je soms buitengesloten voelt bij het voeden; zoek je eigen momenten van huid-op-huidcontact.",
+    ],
+    moeder: [
+      "Lichamelijk herstel na de bevalling kost weken, niet dagen — plan geen verplichtingen buiten verzorging van jezelf en de baby.",
+      "Baby blues (huilerig, overweldigd) in de eerste twee weken is heel gewoon; houdt het langer aan of wordt het zwaarder, neem contact op met je verloskundige of huisarts.",
+    ],
+  },
+  early: {
+    vader: [
+      "Neem waar mogelijk avond- of nachtvoedingen (fles/kolf) over, zodat je partner aaneengesloten kan slapen.",
+      "Vaderschapsverlof is er niet voor niets — plan het bewust in rond drukke momenten, niet alleen de eerste week.",
+    ],
+    moeder: [
+      "Als je borstvoeding geeft: pijn die niet overgaat is niet 'gewoon doorzetten' — vraag hulp van een lactatiekundige.",
+      "Rust nemen wanneer de baby slaapt is geen luxe maar herstel; het huishouden kan wachten.",
+    ],
+  },
+  mid: {
+    vader: [
+      "Als je partner borstvoeding geeft, kun je zelf het bad- of slaapritueel claimen als jouw vaste moment met de baby.",
+      "Vraag jezelf (en je partner) actief hoe het emotioneel met haar gaat — herstel na de bevalling duurt vaak langer dan het lichamelijke.",
+    ],
+    moeder: [
+      "Als je weer aan het werk gaat (of erover nadenkt): er is geen 'juiste' timing — wat voor jullie werkt, is goed.",
+      "Blijf signalen van aanhoudende somberheid serieus nemen; postnatale depressie kan zich ook pas na een paar maanden tonen.",
+    ],
+  },
+  late: {
+    vader: [
+      "Nu de baby mobieler wordt, is dit een goed moment om zelf meer actieve zorgtaken op te pakken (voeden, aankleden, uitstapjes).",
+      "Blijf checken of je partner voldoende eigen tijd/ruimte krijgt, ook nu het zwaarste van de eerste maanden voorbij lijkt.",
+    ],
+    moeder: [
+      "Je eigen identiteit buiten het moederschap mag weer ruimte krijgen — een avondje weg is geen egoïsme.",
+      "Bouw terugkeer naar werk of sport rustig op; je lichaam is nog steeds aan het herstellen van het hele eerste jaar.",
+    ],
+  },
+  toddler: {
+    vader: [
+      "Vier je eigen rol als vader bewust — dit jaar is net zo veel jouw verhaal als dat van je partner.",
+      "Bespreek samen hoe de taakverdeling het komende jaar (kinderopvang, werk) eruit gaat zien.",
+    ],
+    moeder: [
+      "Kijk bewust terug op wat je lichaam en jijzelf het afgelopen jaar hebben doorstaan — dat mag gevierd worden.",
+      "Bespreek samen met je partner de taakverdeling voor het komende jaar, in plaats van vanzelfsprekend voort te zetten wat nu gewoonte is.",
+    ],
+  },
+};
+
+export function getParentTips(week, parentRole) {
+  if (parentRole !== "vader" && parentRole !== "moeder") return [];
+  const phase = siblingPhaseForWeek(week);
+  return PARENT_TIPS[phase][parentRole] || [];
+}
+

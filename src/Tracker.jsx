@@ -3,10 +3,11 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { Square, CheckSquare, Stamp, Ruler, Weight, Plus, ChevronLeft, ChevronRight, Users, Settings, LogOut, BookOpen, Utensils, Moon, CloudRain, CalendarDays, TrendingUp, Image } from "lucide-react";
 import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
-import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData, getSiblingTips, TOPICS, getTopicTips, getPronouns } from "./content.js";
+import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData, getSiblingTips, TOPICS, getTopicTips, getPronouns, getParentTips } from "./content.js";
 import PhotoPanel from "./PhotoPanel.jsx";
 import JournalPanel from "./JournalPanel.jsx";
 import MilestonesPanel from "./MilestonesPanel.jsx";
+import WeekRating from "./WeekRating.jsx";
 
 const TOPIC_ICONS = { eten: Utensils, slapen: Moon, huilen: CloudRain };
 
@@ -47,7 +48,7 @@ function MeetpuntDot({ cx, cy, payload, color }) {
   return <circle cx={cx} cy={cy} r={4} fill={color} stroke="#FFFFFF" strokeWidth={1.5} />;
 }
 
-export default function Tracker({ child, siblings, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, familyId, onOpenReport }) {
+export default function Tracker({ child, siblings, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, familyId, myRole, onOpenReport }) {
   const [entries, setEntries] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [journalEntries, setJournalEntries] = useState([]);
@@ -226,6 +227,11 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
               )}
             </div>
 
+            <div style={{ ...styles.page, marginBottom: 14, paddingTop: 16, paddingBottom: 16 }}>
+              <div style={styles.sectionLabel}>Hoe ging deze week?</div>
+              <WeekRating childId={child.id} week={viewWeek} />
+            </div>
+
             <div style={styles.page}>
               <div style={styles.sectionLabel}>Ontwikkeling</div>
               <ul style={styles.checklist}>
@@ -250,6 +256,23 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
                   ))}
                 </ul>
               </div>
+
+              {(myRole === "vader" || myRole === "moeder") && getParentTips(viewWeek, myRole).length > 0 && (
+                <>
+                  <div style={styles.rule} />
+                  <div style={styles.siblingBox}>
+                    <div style={styles.siblingLabel}>Voor jou, {myRole}</div>
+                    <ul style={styles.checklist}>
+                      {getParentTips(viewWeek, myRole).map((t, i) => (
+                        <li key={i} style={styles.checkItem}>
+                          <Square size={13} color="#8B7FE0" style={{ flexShrink: 0, marginTop: 3 }} />
+                          <span>{renderText(t, vars)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              )}
 
               {siblings && siblings.length > 0 && (
                 <>

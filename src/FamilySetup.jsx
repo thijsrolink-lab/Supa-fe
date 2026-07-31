@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, X, Save, LogOut, Copy, Check } from "lucide-react";
 import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
@@ -25,6 +25,36 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout, prefill
   const [inviteCode, setInviteCode] = useState(null);
   const [inviteBusy, setInviteBusy] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [myRole, setMyRole] = useState("");
+  const [myRoleSaved, setMyRoleSaved] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      if (!existingFamily?.id) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data } = await supabase
+        .from("family_members")
+        .select("parent_role")
+        .eq("family_id", existingFamily.id)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (data?.parent_role) setMyRole(data.parent_role);
+    })();
+  }, [existingFamily?.id]);
+
+  const saveMyRole = async (role) => {
+    setMyRole(role);
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase
+      .from("family_members")
+      .update({ parent_role: role })
+      .eq("family_id", existingFamily.id)
+      .eq("user_id", user.id);
+    if (!error) {
+      setMyRoleSaved(true);
+      setTimeout(() => setMyRoleSaved(false), 2000);
+    }
+  };
 
   const joinFamily = async (e) => {
     e.preventDefault();
@@ -185,6 +215,34 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout, prefill
             ? "Pas namen, geboortedata en geslacht aan, of voeg een kind toe."
             : "Dit gebruiken we om de weetjes en tips persoonlijk te maken — inclusief de juiste voornaamwoorden."}
         </p>
+
+        {existingFamily && (
+          <div style={{ ...styles.quickTipsBox, marginBottom: 18 }}>
+            <div style={{ fontSize: 11, letterSpacing: "0.06em", textTransform: "uppercase", color: "#9A6414", fontWeight: 700, marginBottom: 8 }}>
+              Wie ben jij?
+            </div>
+            <p style={{ ...styles.p, fontSize: 12.5, marginBottom: 10 }}>
+              Hiermee tonen we jou de vader- of moeder-specifieke tips (herstel, verlof, taakverdeling).
+            </p>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                type="button"
+                style={{ ...styles.topicChip, ...(myRole === "vader" ? styles.topicChipActive : {}) }}
+                onClick={() => saveMyRole("vader")}
+              >
+                Vader
+              </button>
+              <button
+                type="button"
+                style={{ ...styles.topicChip, ...(myRole === "moeder" ? styles.topicChipActive : {}) }}
+                onClick={() => saveMyRole("moeder")}
+              >
+                Moeder
+              </button>
+              {myRoleSaved && <span style={{ ...styles.saveMsg, alignSelf: "center" }}>Opgeslagen</span>}
+            </div>
+          </div>
+        )}
 
         {!existingFamily && (
           <div style={{ ...styles.siblingBox, marginBottom: 18 }}>
