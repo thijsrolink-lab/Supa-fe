@@ -134,6 +134,7 @@ export default function App() {
           onSaved={loadFamily}
           onLogout={() => supabase.auth.signOut()}
           prefillCode={inviteCodeFromUrl}
+          onRoleChanged={setMyRole}
         />
       </>
     );

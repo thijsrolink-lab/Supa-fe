@@ -4,7 +4,7 @@ import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
 
 // existingFamily: null (first-time setup) or { id, father_name, mother_name, children: [{id,name,birth_date}] }
-export default function FamilySetup({ existingFamily, onSaved, onLogout, prefillCode }) {
+export default function FamilySetup({ existingFamily, onSaved, onLogout, prefillCode, onRoleChanged }) {
   const [father, setFather] = useState(existingFamily?.father_name || "");
   const [mother, setMother] = useState(existingFamily?.mother_name || "");
   const [children, setChildren] = useState(
@@ -52,6 +52,7 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout, prefill
       .eq("user_id", user.id);
     if (!error) {
       setMyRoleSaved(true);
+      onRoleChanged?.(role);
       setTimeout(() => setMyRoleSaved(false), 2000);
     }
   };
