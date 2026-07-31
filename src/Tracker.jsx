@@ -156,29 +156,27 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
         {/* Persistent week header: stamp, prev/next, month tabs — geldt voor alle 3 blokken */}
         <div style={styles.weekHeaderCard}>
           <div style={styles.pageTopRow}>
-            <div>
-              <div style={styles.pageLabel}>Groeiboekje — {child.name}</div>
-              <h1 style={styles.h1}>{stage.label}</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+              <button className="gb-navbtn" style={styles.navBtn} onClick={() => setViewWeek(Math.max(0, viewWeek - 1))} aria-label="Vorige week"><ChevronLeft size={16} /></button>
+              <div style={{ minWidth: 0 }}>
+                <div style={styles.pageLabel}>{child.name} · week {viewWeek}</div>
+                <h1 style={{ ...styles.h1, fontSize: 22 }}>{stage.label}</h1>
+              </div>
+              <button className="gb-navbtn" style={styles.navBtn} onClick={() => setViewWeek(Math.min(52, viewWeek + 1))} aria-label="Volgende week"><ChevronRight size={16} /></button>
             </div>
-            <div className="gb-mono" style={{ ...styles.stamp, ...(countdown ? styles.stampCountdown : {}) }}>
-              <Stamp size={16} style={{ marginBottom: 2 }} />
+            <div className="gb-mono" style={{ ...styles.stamp, ...(countdown ? styles.stampCountdown : {}), width: 52, height: 52, flexShrink: 0 }}>
+              <Stamp size={13} style={{ marginBottom: 1 }} />
               {countdown ? (
                 <>
-                  <span>NOG</span>
-                  <span style={{ fontSize: 15, fontWeight: 700 }}>{countdown}</span>
-                  <span>{countdown === 1 ? "DAG" : "DAGEN"}</span>
+                  <span style={{ fontSize: 8 }}>NOG</span>
+                  <span style={{ fontSize: 12, fontWeight: 700 }}>{countdown}</span>
+                  <span style={{ fontSize: 8 }}>{countdown === 1 ? "DAG" : "DAGEN"}</span>
                 </>
-              ) : `WEEK ${currentWeek}`}
+              ) : <span style={{ fontSize: 9 }}>WEEK {currentWeek}</span>}
             </div>
           </div>
 
-          <div style={styles.navRow}>
-            <button className="gb-navbtn" style={styles.navBtn} onClick={() => setViewWeek(Math.max(0, viewWeek - 1))} aria-label="Vorige week"><ChevronLeft size={16} /></button>
-            <span className="gb-mono" style={styles.navWeek}>bekijkt week {viewWeek}</span>
-            <button className="gb-navbtn" style={styles.navBtn} onClick={() => setViewWeek(Math.min(52, viewWeek + 1))} aria-label="Volgende week"><ChevronRight size={16} /></button>
-          </div>
-
-          <div style={styles.tabStrip} className="gb-tabstrip">
+          <div style={{ ...styles.tabStrip, marginTop: 12 }} className="gb-tabstrip">
             {months.map((m) => {
               const active = stage.month === m;
               return (
