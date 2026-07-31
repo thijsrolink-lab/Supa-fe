@@ -5,15 +5,20 @@ import { supabase } from "./supabaseClient.js";
 export default function WeekRating({ childId, week }) {
   const [myRating, setMyRating] = useState(0);
   const [others, setOthers] = useState([]); // [{user_id, rating}]
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("week_ratings")
         .select("user_id, rating")
         .eq("child_id", childId)
         .eq("week", week);
+      if (error) {
+        setErrorMsg("Kon beoordelingen niet laden.");
+        return;
+      }
       const mine = (data || []).find(r => r.user_id === user.id);
       setMyRating(mine?.rating || 0);
       setOthers((data || []).filter(r => r.user_id !== user.id));
@@ -21,11 +26,17 @@ export default function WeekRating({ childId, week }) {
   }, [childId, week]);
 
   const rate = async (value) => {
+    const previous = myRating;
     setMyRating(value);
+    setErrorMsg("");
     const { data: { user } } = await supabase.auth.getUser();
-    await supabase
+    const { error } = await supabase
       .from("week_ratings")
       .upsert({ child_id: childId, user_id: user.id, week, rating: value, updated_at: new Date().toISOString() }, { onConflict: "child_id,user_id,week" });
+    if (error) {
+      setMyRating(previous); // zet terug, want het is niet echt opgeslagen
+      setErrorMsg(`Opslaan mislukt: ${error.message}`);
+    }
   };
 
   return (
@@ -47,6 +58,10 @@ export default function WeekRating({ childId, week }) {
           Partner gaf deze week: {others.map(o => "★".repeat(o.rating)).join(", ")}
         </div>
       )}
+      {errorMsg && (
+        <div style={{ fontSize: 12, color: "#E4572E", marginTop: 6 }}>{errorMsg}</div>
+      )}
     </div>
   );
 }
+
