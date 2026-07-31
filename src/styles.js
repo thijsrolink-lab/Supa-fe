@@ -95,6 +95,11 @@ export const styles = {
   addRowBtn: { display: "flex", alignItems: "center", gap: 6, border: `1.5px dashed ${COLOR.border}`, background: "transparent", color: COLOR.inkMuted, borderRadius: 12, padding: "8px 13px", fontSize: 13, fontWeight: 600, cursor: "pointer", marginTop: 2, marginBottom: 18 },
 
   topBar: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
+  identityBar: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
+  identityName: { fontFamily: FONT_DISPLAY, fontWeight: 800, fontSize: 19, color: COLOR.ink, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
+  menuOverlay: { position: "fixed", inset: 0, zIndex: 29, background: "transparent" },
+  dropdownMenu: { position: "absolute", right: 0, top: "calc(100% + 6px)", zIndex: 30, background: COLOR.card, border: `1px solid ${COLOR.border}`, borderRadius: 12, boxShadow: "0 10px 24px -8px rgba(30,42,51,0.25)", padding: 6, minWidth: 170, display: "flex", flexDirection: "column", gap: 2 },
+  dropdownItem: { display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent", color: COLOR.ink, fontFamily: FONT_BODY, fontWeight: 600, fontSize: 13.5, padding: "9px 10px", borderRadius: 8, cursor: "pointer", textAlign: "left" },
   childTabs: { display: "flex", gap: 6, overflowX: "auto", marginBottom: 14 },
   childTab: { flexShrink: 0, border: `1px solid ${COLOR.border}`, background: COLOR.card, color: COLOR.inkMuted, fontFamily: FONT_BODY, fontWeight: 600, fontSize: 12.5, padding: "7px 13px", borderRadius: 12, cursor: "pointer" },
   childTabActive: { background: COLOR.teal, color: "#fff", borderColor: COLOR.teal },

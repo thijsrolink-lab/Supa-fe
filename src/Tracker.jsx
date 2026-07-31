@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Square, CheckSquare, Stamp, Ruler, Weight, Plus, ChevronLeft, ChevronRight, Users, Settings, LogOut, BookOpen, Utensils, Moon, CloudRain, CalendarDays, TrendingUp, Image } from "lucide-react";
+import { Square, CheckSquare, Stamp, Ruler, Weight, Plus, ChevronLeft, ChevronRight, Users, Settings, LogOut, BookOpen, Utensils, Moon, CloudRain, CalendarDays, TrendingUp, Image, Baby, MoreVertical } from "lucide-react";
 import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
 import { STAGES, WEIGHT_REF_KG, LENGTH_REF_CM, buildChartData, getSiblingTips, TOPICS, getTopicTips, getPronouns, getParentTips } from "./content.js";
@@ -61,6 +61,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
   const [activeTopic, setActiveTopic] = useState(null);
   const [activeTab, setActiveTab] = useState("vandaag");
   const [groeiSubTab, setGroeiSubTab] = useState("meting");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const currentWeek = weekFromBirth(child.birth_date);
   const countdown = daysUntilBirth(child.birth_date);
@@ -132,35 +133,53 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
   return (
     <div style={styles.wrap}>
       <div style={{ ...styles.container, paddingBottom: 96 }}>
-        {/* Top bar: child switcher + icon actions */}
-        <div style={styles.topBar}>
-          {childOptions && childOptions.length > 1 ? (
-            <div style={styles.childTabs}>
-              {childOptions.map((c) => (
-                <button
-                  key={c.id}
-                  style={{ ...styles.childTab, ...(c.id === child.id ? styles.childTabActive : {}) }}
-                  onClick={() => onSelectChild(c.id)}
-                >
-                  {c.name}
-                </button>
-              ))}
-            </div>
-          ) : <div />}
-          <div style={{ display: "flex", gap: 6 }}>
-            <button className="gb-navbtn" style={styles.iconBtn} onClick={onEditFamily} aria-label="Gezin bewerken"><Settings size={15} /></button>
-            <button className="gb-navbtn" style={styles.iconBtn} onClick={onLogout} aria-label="Uitloggen"><LogOut size={15} /></button>
+        {/* Identiteitsbalk: naam van de baby + samengevoegd menu (gezin/uitloggen) */}
+        <div style={styles.identityBar}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+            <Baby size={20} color="#0FB8A6" style={{ flexShrink: 0 }} />
+            <span style={styles.identityName}>{child.name}</span>
+          </div>
+          <div style={{ position: "relative" }}>
+            <button className="gb-navbtn" style={styles.iconBtn} onClick={() => setMenuOpen(o => !o)} aria-label="Menu">
+              <MoreVertical size={16} />
+            </button>
+            {menuOpen && (
+              <>
+                <div style={styles.menuOverlay} onClick={() => setMenuOpen(false)} />
+                <div style={styles.dropdownMenu}>
+                  <button className="gb-dropdown-item" style={styles.dropdownItem} onClick={() => { setMenuOpen(false); onEditFamily(); }}>
+                    <Settings size={14} /> Gezin bewerken
+                  </button>
+                  <button className="gb-dropdown-item" style={{ ...styles.dropdownItem, color: "#E4572E" }} onClick={() => { setMenuOpen(false); onLogout(); }}>
+                    <LogOut size={14} /> Uitloggen
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Persistent week header: stamp, prev/next, month tabs — geldt voor alle 3 blokken */}
+        {childOptions && childOptions.length > 1 && (
+          <div style={styles.childTabs}>
+            {childOptions.map((c) => (
+              <button
+                key={c.id}
+                style={{ ...styles.childTab, ...(c.id === child.id ? styles.childTabActive : {}) }}
+                onClick={() => onSelectChild(c.id)}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Persistent week header: puur navigatie — pijltjes, badge, maand-tabs */}
         <div style={styles.weekHeaderCard}>
           <div style={styles.pageTopRow}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
               <button className="gb-navbtn" style={styles.navBtn} onClick={() => setViewWeek(Math.max(0, viewWeek - 1))} aria-label="Vorige week"><ChevronLeft size={16} /></button>
               <div style={{ minWidth: 0 }}>
-                <div style={styles.pageLabel}>{child.name} · week {viewWeek}</div>
-                <h1 style={{ ...styles.h1, fontSize: 22 }}>{stage.label}</h1>
+                <h1 style={{ ...styles.h1, fontSize: 22, margin: 0 }}>{stage.label}</h1>
               </div>
               <button className="gb-navbtn" style={styles.navBtn} onClick={() => setViewWeek(Math.min(52, viewWeek + 1))} aria-label="Volgende week"><ChevronRight size={16} /></button>
             </div>

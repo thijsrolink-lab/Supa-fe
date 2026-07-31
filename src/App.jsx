@@ -34,6 +34,8 @@ function GlobalFonts() {
       .gb-formfield:focus-within { box-shadow: 0 0 0 2px #0FB8A6; }
       .gb-forminput { outline: none; }
 
+      .gb-dropdown-item:hover { background: #F4F7F8; }
+
       @keyframes gbFadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
       .gb-fade { animation: gbFadeIn 260ms cubic-bezier(0.16, 1, 0.3, 1); }
 
