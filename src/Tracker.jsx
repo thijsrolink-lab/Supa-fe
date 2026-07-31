@@ -164,7 +164,16 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
               </div>
               <button className="gb-navbtn" style={styles.navBtn} onClick={() => setViewWeek(Math.min(52, viewWeek + 1))} aria-label="Volgende week"><ChevronRight size={16} /></button>
             </div>
-            <div className="gb-mono" style={{ ...styles.stamp, ...(countdown ? styles.stampCountdown : {}), width: 52, height: 52, flexShrink: 0 }}>
+            <button
+              className="gb-mono gb-navbtn"
+              onClick={() => setViewWeek(currentWeek)}
+              aria-label="Ga naar huidige week"
+              style={{
+                ...styles.stamp, ...(countdown ? styles.stampCountdown : {}),
+                width: 52, height: 52, flexShrink: 0, border: "none", cursor: "pointer",
+                opacity: viewWeek === currentWeek ? 1 : 0.85,
+              }}
+            >
               <Stamp size={13} style={{ marginBottom: 1 }} />
               {countdown ? (
                 <>
@@ -172,8 +181,12 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
                   <span style={{ fontSize: 12, fontWeight: 700 }}>{countdown}</span>
                   <span style={{ fontSize: 8 }}>{countdown === 1 ? "DAG" : "DAGEN"}</span>
                 </>
-              ) : <span style={{ fontSize: 9 }}>WEEK {currentWeek}</span>}
-            </div>
+              ) : viewWeek === currentWeek ? (
+                <span style={{ fontSize: 9 }}>WEEK {currentWeek}</span>
+              ) : (
+                <span style={{ fontSize: 8, lineHeight: 1.2 }}>NAAR<br />NU</span>
+              )}
+            </button>
           </div>
 
           <div style={{ ...styles.tabStrip, marginTop: 12 }} className="gb-tabstrip">
