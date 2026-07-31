@@ -4,6 +4,7 @@ import Auth from "./Auth.jsx";
 import FamilySetup from "./FamilySetup.jsx";
 import Tracker from "./Tracker.jsx";
 import Jaarverslag from "./Jaarverslag.jsx";
+import ResetPassword from "./ResetPassword.jsx";
 
 function GlobalFonts() {
   return (
@@ -58,11 +59,13 @@ export default function App() {
   const [selectedChildId, setSelectedChildId] = useState(null);
   const [editingFamily, setEditingFamily] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [recoveryMode, setRecoveryMode] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, sess) => {
       setSession(sess);
+      if (event === "PASSWORD_RECOVERY") setRecoveryMode(true);
       if (!sess) { setFamily(undefined); setSelectedChildId(null); }
     });
     return () => sub.subscription.unsubscribe();
@@ -97,6 +100,9 @@ export default function App() {
 
   useEffect(() => { loadFamily(); }, [loadFamily]);
 
+  if (recoveryMode) {
+    return <><GlobalFonts /><ResetPassword onDone={() => setRecoveryMode(false)} /></>;
+  }
   if (session === undefined) {
     return <><GlobalFonts /><div style={{ padding: 40, fontFamily: "'Inter', sans-serif" }}>Even laden…</div></>;
   }
