@@ -1,10 +1,33 @@
 -- Voer dit één keer uit in de Supabase SQL editor (Project → SQL Editor → New query).
+-- Dit is een volledige herziening t.o.v. eerdere versies: een gezin kan nu door
+-- meerdere accounts gedeeld worden (bijv. beide ouders), via family_members +
+-- een uitnodigingscode. Als je de tabellen al eerder had aangemaakt, kun je dit
+-- script gewoon opnieuw draaien — de "create table if not exists" en
+-- "drop policy if exists" zorgen dat het veilig herhaalbaar is.
 
 create table if not exists public.families (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users(id) on delete cascade not null unique,
+  user_id uuid references auth.users(id) on delete cascade,
   father_name text,
   mother_name text,
+  created_at timestamptz default now()
+);
+
+-- Koppeltabel: welke accounts horen bij welk gezin.
+create table if not exists public.family_members (
+  family_id uuid references public.families(id) on delete cascade not null,
+  user_id uuid references auth.users(id) on delete cascade not null,
+  role text not null default 'member',
+  created_at timestamptz default now(),
+  primary key (family_id, user_id)
+);
+
+-- Uitnodigingscodes: de ene ouder genereert een code, de andere voert 'm in om
+-- lid te worden van hetzelfde gezin.
+create table if not exists public.family_invites (
+  id uuid primary key default gen_random_uuid(),
+  family_id uuid references public.families(id) on delete cascade not null,
+  code text not null unique,
   created_at timestamptz default now()
 );
 
@@ -27,8 +50,6 @@ create table if not exists public.growth_entries (
   unique (child_id, week)
 );
 
--- Broers/zussen: alleen een naam, geen eigen groeiboekje/tracker. Worden alleen
--- gebruikt om de "omgang met broer/zus"-tips te personaliseren.
 create table if not exists public.siblings (
   id uuid primary key default gen_random_uuid(),
   family_id uuid references public.families(id) on delete cascade not null,
@@ -38,8 +59,6 @@ create table if not exists public.siblings (
   created_at timestamptz default now()
 );
 
--- Foto's: bestand staat in Storage (bucket "baby-photos"), deze tabel koppelt
--- het bestandspad aan een kind + (optioneel) een week, voor het jaarverslag.
 create table if not exists public.photos (
   id uuid primary key default gen_random_uuid(),
   child_id uuid references public.children(id) on delete cascade not null,
@@ -49,8 +68,6 @@ create table if not exists public.photos (
   created_at timestamptz default now()
 );
 
--- Verslagje per week: getypt of ingesproken (spraak-naar-tekst gebeurt in de
--- browser, hier komt alleen de resulterende tekst binnen).
 create table if not exists public.journal_entries (
   id uuid primary key default gen_random_uuid(),
   child_id uuid references public.children(id) on delete cascade not null,
@@ -61,8 +78,6 @@ create table if not exists public.journal_entries (
   unique (child_id, week)
 );
 
--- Mijlpalen: "eerste keertjes" die je afvinkt zodra ze gebeuren, los van de week
--- die je op dat moment aan het bekijken bent.
 create table if not exists public.milestones (
   id uuid primary key default gen_random_uuid(),
   child_id uuid references public.children(id) on delete cascade not null,
@@ -72,13 +87,13 @@ create table if not exists public.milestones (
   unique (child_id, milestone_key)
 );
 
--- Storage-bucket voor foto's (privé — alleen toegankelijk via signed URLs voor
--- de eigenaar, zie de policies hieronder).
 insert into storage.buckets (id, name, public)
 values ('baby-photos', 'baby-photos', false)
 on conflict (id) do nothing;
 
 alter table public.families enable row level security;
+alter table public.family_members enable row level security;
+alter table public.family_invites enable row level security;
 alter table public.children enable row level security;
 alter table public.growth_entries enable row level security;
 alter table public.siblings enable row level security;
@@ -86,89 +101,141 @@ alter table public.photos enable row level security;
 alter table public.journal_entries enable row level security;
 alter table public.milestones enable row level security;
 
--- Iedereen kan alleen het eigen gezin zien/bewerken.
-create policy "own family" on public.families
-  for all using (user_id = auth.uid()) with check (user_id = auth.uid());
+-- ---------- families: lezen/wijzigen mag elk lid van het gezin; aanmaken mag iedereen ----------
+drop policy if exists "own family" on public.families;
+drop policy if exists "members can view family" on public.families;
+drop policy if exists "members can update family" on public.families;
+drop policy if exists "authenticated can create family" on public.families;
 
-create policy "own children" on public.children
-  for all using (family_id in (select id from public.families where user_id = auth.uid()))
-  with check (family_id in (select id from public.families where user_id = auth.uid()));
+create policy "authenticated can create family" on public.families
+  for insert with check (auth.uid() = user_id);
 
-create policy "own siblings" on public.siblings
-  for all using (family_id in (select id from public.families where user_id = auth.uid()))
-  with check (family_id in (select id from public.families where user_id = auth.uid()));
+create policy "members can view family" on public.families
+  for select using (id in (select family_id from public.family_members where user_id = auth.uid()));
 
-create policy "own photos" on public.photos
+create policy "members can update family" on public.families
+  for update using (id in (select family_id from public.family_members where user_id = auth.uid()));
+
+-- ---------- family_members: je ziet de leden van je eigen gezin(nen) ----------
+drop policy if exists "view own memberships" on public.family_members;
+drop policy if exists "insert own membership" on public.family_members;
+
+create policy "view own memberships" on public.family_members
+  for select using (
+    user_id = auth.uid()
+    or family_id in (select family_id from public.family_members where user_id = auth.uid())
+  );
+
+create policy "insert own membership" on public.family_members
+  for insert with check (user_id = auth.uid());
+
+-- ---------- family_invites: elke ingelogde gebruiker mag een code opzoeken/aanmaken ----------
+-- (een code zelf is niet gevoelig — het is puur een sleuteltje om lid te worden)
+drop policy if exists "authenticated can read invites" on public.family_invites;
+drop policy if exists "members can create invites" on public.family_invites;
+
+create policy "authenticated can read invites" on public.family_invites
+  for select using (auth.role() = 'authenticated');
+
+create policy "members can create invites" on public.family_invites
+  for insert with check (family_id in (select family_id from public.family_members where user_id = auth.uid()));
+
+-- ---------- children / siblings / growth / photos / journal / milestones: alle gezinsleden ----------
+drop policy if exists "own children" on public.children;
+create policy "family members children" on public.children
+  for all using (family_id in (select family_id from public.family_members where user_id = auth.uid()))
+  with check (family_id in (select family_id from public.family_members where user_id = auth.uid()));
+
+drop policy if exists "own siblings" on public.siblings;
+create policy "family members siblings" on public.siblings
+  for all using (family_id in (select family_id from public.family_members where user_id = auth.uid()))
+  with check (family_id in (select family_id from public.family_members where user_id = auth.uid()));
+
+drop policy if exists "own growth entries" on public.growth_entries;
+create policy "family members growth entries" on public.growth_entries
   for all using (
     child_id in (
       select c.id from public.children c
-      join public.families f on c.family_id = f.id
-      where f.user_id = auth.uid()
+      where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
     )
   )
   with check (
     child_id in (
       select c.id from public.children c
-      join public.families f on c.family_id = f.id
-      where f.user_id = auth.uid()
+      where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
     )
   );
 
-create policy "own journal entries" on public.journal_entries
+drop policy if exists "own photos" on public.photos;
+create policy "family members photos" on public.photos
   for all using (
     child_id in (
       select c.id from public.children c
-      join public.families f on c.family_id = f.id
-      where f.user_id = auth.uid()
+      where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
     )
   )
   with check (
     child_id in (
       select c.id from public.children c
-      join public.families f on c.family_id = f.id
-      where f.user_id = auth.uid()
+      where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
     )
   );
 
-create policy "own milestones" on public.milestones
+drop policy if exists "own journal entries" on public.journal_entries;
+create policy "family members journal entries" on public.journal_entries
   for all using (
     child_id in (
       select c.id from public.children c
-      join public.families f on c.family_id = f.id
-      where f.user_id = auth.uid()
+      where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
     )
   )
   with check (
     child_id in (
       select c.id from public.children c
-      join public.families f on c.family_id = f.id
-      where f.user_id = auth.uid()
+      where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
     )
   );
 
--- Storage: elke gebruiker mag alleen bestanden lezen/uploaden/verwijderen onder
--- zijn eigen map (het pad begint met de eigen user_id, wordt in de app zo opgebouwd).
-create policy "own photo files select" on storage.objects
-  for select using (bucket_id = 'baby-photos' and (storage.foldername(name))[1] = auth.uid()::text);
-
-create policy "own photo files insert" on storage.objects
-  for insert with check (bucket_id = 'baby-photos' and (storage.foldername(name))[1] = auth.uid()::text);
-
-create policy "own photo files delete" on storage.objects
-  for delete using (bucket_id = 'baby-photos' and (storage.foldername(name))[1] = auth.uid()::text);
-
-create policy "own growth entries" on public.growth_entries
+drop policy if exists "own milestones" on public.milestones;
+create policy "family members milestones" on public.milestones
   for all using (
     child_id in (
       select c.id from public.children c
-      join public.families f on c.family_id = f.id
-      where f.user_id = auth.uid()
+      where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
     )
   )
   with check (
     child_id in (
       select c.id from public.children c
-      join public.families f on c.family_id = f.id
-      where f.user_id = auth.uid()
+      where c.family_id in (select family_id from public.family_members where user_id = auth.uid())
+    )
+  );
+
+-- ---------- Storage: pad is nu {family_id}/{child_id}/bestand, toegankelijk voor alle gezinsleden ----------
+drop policy if exists "own photo files select" on storage.objects;
+drop policy if exists "own photo files insert" on storage.objects;
+drop policy if exists "own photo files delete" on storage.objects;
+
+create policy "family photo files select" on storage.objects
+  for select using (
+    bucket_id = 'baby-photos'
+    and (storage.foldername(name))[1] in (
+      select family_id::text from public.family_members where user_id = auth.uid()
+    )
+  );
+
+create policy "family photo files insert" on storage.objects
+  for insert with check (
+    bucket_id = 'baby-photos'
+    and (storage.foldername(name))[1] in (
+      select family_id::text from public.family_members where user_id = auth.uid()
+    )
+  );
+
+create policy "family photo files delete" on storage.objects
+  for delete using (
+    bucket_id = 'baby-photos'
+    and (storage.foldername(name))[1] in (
+      select family_id::text from public.family_members where user_id = auth.uid()
     )
   );

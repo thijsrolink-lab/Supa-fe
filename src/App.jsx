@@ -71,10 +71,19 @@ export default function App() {
   const loadFamily = useCallback(async () => {
     if (!session) return;
     setFamily(undefined);
+    const { data: membership, error: memberError } = await supabase
+      .from("family_members")
+      .select("family_id")
+      .eq("user_id", session.user.id)
+      .maybeSingle();
+    if (memberError || !membership) {
+      setFamily(null);
+      return;
+    }
     const { data: fam, error } = await supabase
       .from("families")
       .select("id, father_name, mother_name, children(id, name, birth_date, gender), siblings(id, name, birth_date, gender)")
-      .eq("user_id", session.user.id)
+      .eq("id", membership.family_id)
       .maybeSingle();
     if (error || !fam) {
       setFamily(null);
@@ -89,13 +98,13 @@ export default function App() {
   useEffect(() => { loadFamily(); }, [loadFamily]);
 
   if (session === undefined) {
-    return <><GlobalFonts /><div style={{ padding: 40, fontFamily: "'IBM Plex Mono', monospace" }}>Even laden…</div></>;
+    return <><GlobalFonts /><div style={{ padding: 40, fontFamily: "'Inter', sans-serif" }}>Even laden…</div></>;
   }
   if (!session) {
     return <><GlobalFonts /><Auth /></>;
   }
   if (family === undefined) {
-    return <><GlobalFonts /><div style={{ padding: 40, fontFamily: "'IBM Plex Mono', monospace" }}>Gezin laden…</div></>;
+    return <><GlobalFonts /><div style={{ padding: 40, fontFamily: "'Inter', sans-serif" }}>Gezin laden…</div></>;
   }
   if (!family || editingFamily || (family.children || []).length === 0) {
     return (
@@ -140,7 +149,7 @@ export default function App() {
         siblings={siblings}
         partnerName={partnerName}
         childOptions={children}
-        userId={session.user.id}
+        familyId={family.id}
         onSelectChild={setSelectedChildId}
         onEditFamily={() => setEditingFamily(true)}
         onLogout={() => supabase.auth.signOut()}

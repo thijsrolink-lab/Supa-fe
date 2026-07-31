@@ -19,6 +19,67 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
   );
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [joinCode, setJoinCode] = useState("");
+  const [joinError, setJoinError] = useState("");
+  const [joinBusy, setJoinBusy] = useState(false);
+  const [inviteCode, setInviteCode] = useState(null);
+  const [inviteBusy, setInviteBusy] = useState(false);
+
+  const joinFamily = async (e) => {
+    e.preventDefault();
+    setJoinError("");
+    const code = joinCode.trim().toUpperCase();
+    if (!code) return;
+    setJoinBusy(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data: invite, error: inviteErr } = await supabase
+        .from("family_invites")
+        .select("family_id")
+        .eq("code", code)
+        .maybeSingle();
+      if (inviteErr) throw inviteErr;
+      if (!invite) {
+        setJoinError("Code niet gevonden. Check of je 'm goed hebt overgetypt.");
+        return;
+      }
+      const { error: memberErr } = await supabase
+        .from("family_members")
+        .insert({ family_id: invite.family_id, user_id: user.id, role: "member" });
+      if (memberErr) {
+        if (memberErr.code === "23505") {
+          setJoinError("Je bent al lid van dit gezin.");
+        } else {
+          throw memberErr;
+        }
+        return;
+      }
+      onSaved();
+    } catch (err) {
+      setJoinError(err.message || "Toetreden mislukt.");
+    } finally {
+      setJoinBusy(false);
+    }
+  };
+
+  const generateInvite = async () => {
+    if (!existingFamily?.id) return;
+    setInviteBusy(true);
+    try {
+      const code = Math.random().toString(36).slice(2, 8).toUpperCase();
+      const { data, error } = await supabase
+        .from("family_invites")
+        .insert({ family_id: existingFamily.id, code })
+        .select()
+        .single();
+      if (error) throw error;
+      setInviteCode(data.code);
+    } catch (err) {
+      setError(err.message || "Uitnodigingscode maken mislukt.");
+    } finally {
+      setInviteBusy(false);
+    }
+  };
 
   const updateChild = (i, field, value) => {
     setChildren(prev => prev.map((c, idx) => idx === i ? { ...c, [field]: value } : c));
@@ -53,6 +114,10 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
           .single();
         if (error) throw error;
         familyId = data.id;
+        const { error: memberError } = await supabase
+          .from("family_members")
+          .insert({ family_id: familyId, user_id: user.id, role: "owner" });
+        if (memberError) throw memberError;
       } else {
         const { error } = await supabase
           .from("families")
@@ -119,6 +184,28 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
             ? "Pas namen, geboortedata en geslacht aan, of voeg een kind toe."
             : "Dit gebruiken we om de weetjes en tips persoonlijk te maken — inclusief de juiste voornaamwoorden."}
         </p>
+
+        {!existingFamily && (
+          <div style={{ ...styles.siblingBox, marginBottom: 18 }}>
+            <div style={styles.siblingLabel}>Al een gezin met je partner?</div>
+            <p style={{ ...styles.p, fontSize: 13, marginBottom: 10 }}>
+              Heb je een uitnodigingscode van je partner gekregen? Vul die hier in in plaats van
+              een nieuw gezin te starten.
+            </p>
+            <form onSubmit={joinFamily} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <input
+                value={joinCode}
+                onChange={(e) => setJoinCode(e.target.value)}
+                placeholder="Bijv. 7K3P9A"
+                style={{ ...styles.memberInput, textTransform: "uppercase", flex: "1 1 160px" }}
+              />
+              <button className="gb-stampbtn" type="submit" disabled={joinBusy} style={styles.stampBtn}>
+                {joinBusy ? "Bezig…" : "Toetreden"}
+              </button>
+            </form>
+            {joinError && <div style={{ ...styles.saveMsg, color: "#E4572E" }}>{joinError}</div>}
+          </div>
+        )}
 
         <form onSubmit={submit}>
           <div style={styles.formGroup}>
@@ -203,6 +290,28 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
           Bij meerdere kinderen zie je bij elk kind de anderen (en de ingevulde broers/zussen)
           terug in de "omgang met broer/zus"-tips.
         </div>
+
+        {existingFamily && (
+          <div style={{ ...styles.noteBox, marginTop: 18 }}>
+            <div style={styles.noteLabel}>Partner uitnodigen</div>
+            <p style={{ ...styles.p, fontSize: 13, marginBottom: 10 }}>
+              Genereer een code en deel 'm (bijv. via WhatsApp). Je partner maakt een eigen
+              account aan en voert de code in bij het inloggen — dan zien jullie hetzelfde gezin.
+            </p>
+            {inviteCode ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 22, letterSpacing: "0.08em", color: "#E4572E" }}>
+                  {inviteCode}
+                </span>
+                <button type="button" style={styles.linkBtn} onClick={generateInvite}>Nieuwe code maken</button>
+              </div>
+            ) : (
+              <button type="button" className="gb-stampbtn" style={styles.stampBtn} onClick={generateInvite} disabled={inviteBusy}>
+                {inviteBusy ? "Bezig…" : "Genereer code"}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import { styles } from "./styles.js";
 // Toont foto's van deze specifieke week + laat een nieuwe foto uploaden.
 // photos: alle foto-rijen van het kind (uit Tracker, zodat we niet per week apart
 // hoeven te fetchen); onChanged geeft de bijgewerkte lijst terug aan de ouder.
-export default function PhotoPanel({ childId, userId, week, photos, onChanged }) {
+export default function PhotoPanel({ childId, familyId, week, photos, onChanged }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [urls, setUrls] = useState({}); // storage_path -> signed url
@@ -43,7 +43,7 @@ export default function PhotoPanel({ childId, userId, week, photos, onChanged })
     setBusy(true);
     try {
       const ext = file.name.split(".").pop();
-      const path = `${userId}/${childId}/${Date.now()}-w${week}.${ext}`;
+      const path = `${familyId}/${childId}/${Date.now()}-w${week}.${ext}`;
       const { error: upErr } = await supabase.storage.from("baby-photos").upload(path, file);
       if (upErr) throw upErr;
       const { data: row, error: rowErr } = await supabase

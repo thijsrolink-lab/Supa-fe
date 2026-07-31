@@ -47,7 +47,7 @@ function MeetpuntDot({ cx, cy, payload, color }) {
   return <circle cx={cx} cy={cy} r={4} fill={color} stroke="#FFFFFF" strokeWidth={1.5} />;
 }
 
-export default function Tracker({ child, siblings, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, userId, onOpenReport }) {
+export default function Tracker({ child, siblings, partnerName, childOptions, onSelectChild, onEditFamily, onLogout, familyId, onOpenReport }) {
   const [entries, setEntries] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [journalEntries, setJournalEntries] = useState([]);
@@ -370,7 +370,7 @@ export default function Tracker({ child, siblings, partnerName, childOptions, on
           <div key={viewWeek} className="gb-fade">
             <div style={styles.page}>
               <div style={styles.sectionLabel}>Foto's — week {viewWeek}</div>
-              <PhotoPanel childId={child.id} userId={userId} week={viewWeek} photos={photos} onChanged={setPhotos} />
+              <PhotoPanel childId={child.id} familyId={familyId} week={viewWeek} photos={photos} onChanged={setPhotos} />
 
               <div style={styles.rule} />
 
