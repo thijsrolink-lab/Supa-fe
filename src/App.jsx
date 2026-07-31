@@ -145,7 +145,12 @@ export default function App() {
     ...children.filter(c => c.id !== activeChild.id).map(c => ({ name: c.name, birth_date: c.birth_date, gender: c.gender })),
     ...(family.siblings || []).map(s => ({ name: s.name, birth_date: s.birth_date, gender: s.gender })),
   ];
-  const partnerName = family.mother_name || family.father_name || null;
+  // Als we weten of jij vader of moeder bent, is "partner" ondubbelzinnig de ander.
+  // Zonder die info vallen we terug op de eerst beschikbare naam.
+  const partnerName =
+    myRole === "vader" ? (family.mother_name || null) :
+    myRole === "moeder" ? (family.father_name || null) :
+    (family.mother_name || family.father_name || null);
 
   if (showReport) {
     return (
