@@ -60,6 +60,17 @@ export default function App() {
   const [editingFamily, setEditingFamily] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [recoveryMode, setRecoveryMode] = useState(false);
+  const [inviteCodeFromUrl, setInviteCodeFromUrl] = useState(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const invite = params.get("invite");
+    if (invite) {
+      setInviteCodeFromUrl(invite.toUpperCase());
+      // Haal 'm uit de zichtbare URL, maar bewaar de waarde in state.
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -120,6 +131,7 @@ export default function App() {
           existingFamily={family || null}
           onSaved={loadFamily}
           onLogout={() => supabase.auth.signOut()}
+          prefillCode={inviteCodeFromUrl}
         />
       </>
     );

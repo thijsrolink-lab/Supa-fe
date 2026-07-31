@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Plus, X, Save, LogOut } from "lucide-react";
+import { Plus, X, Save, LogOut, Copy, Check } from "lucide-react";
 import { supabase } from "./supabaseClient.js";
 import { styles } from "./styles.js";
 
 // existingFamily: null (first-time setup) or { id, father_name, mother_name, children: [{id,name,birth_date}] }
-export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
+export default function FamilySetup({ existingFamily, onSaved, onLogout, prefillCode }) {
   const [father, setFather] = useState(existingFamily?.father_name || "");
   const [mother, setMother] = useState(existingFamily?.mother_name || "");
   const [children, setChildren] = useState(
@@ -19,11 +19,12 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
   );
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [joinCode, setJoinCode] = useState("");
+  const [joinCode, setJoinCode] = useState(prefillCode || "");
   const [joinError, setJoinError] = useState("");
   const [joinBusy, setJoinBusy] = useState(false);
   const [inviteCode, setInviteCode] = useState(null);
   const [inviteBusy, setInviteBusy] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const joinFamily = async (e) => {
     e.preventDefault();
@@ -299,11 +300,42 @@ export default function FamilySetup({ existingFamily, onSaved, onLogout }) {
               account aan en voert de code in bij het inloggen — dan zien jullie hetzelfde gezin.
             </p>
             {inviteCode ? (
-              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 22, letterSpacing: "0.08em", color: "#E4572E" }}>
-                  {inviteCode}
-                </span>
-                <button type="button" style={styles.linkBtn} onClick={generateInvite}>Nieuwe code maken</button>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 8 }}>
+                  <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 22, letterSpacing: "0.08em", color: "#E4572E" }}>
+                    {inviteCode}
+                  </span>
+                  <button type="button" style={styles.linkBtn} onClick={generateInvite}>Nieuwe code maken</button>
+                </div>
+                <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                  <input
+                    readOnly
+                    value={`${window.location.origin}/?invite=${inviteCode}`}
+                    style={{ ...styles.blankInput, flex: "1 1 220px", fontSize: 12.5 }}
+                    onFocus={(e) => e.target.select()}
+                  />
+                  <button
+                    type="button"
+                    className="gb-stampbtn"
+                    style={{ ...styles.stampBtn, flexShrink: 0 }}
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(`${window.location.origin}/?invite=${inviteCode}`);
+                        setLinkCopied(true);
+                        setTimeout(() => setLinkCopied(false), 2000);
+                      } catch {
+                        // clipboard kan geblokkeerd zijn; de tekst staat sowieso al selecteerbaar in het veld
+                      }
+                    }}
+                  >
+                    {linkCopied ? <Check size={14} /> : <Copy size={14} />}
+                    {linkCopied ? "Gekopieerd" : "Kopieer link"}
+                  </button>
+                </div>
+                <p style={{ ...styles.p, fontSize: 12, marginTop: 8 }}>
+                  Stuur deze link naar je partner. Als ze 'm opent, wordt de code automatisch al ingevuld
+                  bij het aanmaken van haar account.
+                </p>
               </div>
             ) : (
               <button type="button" className="gb-stampbtn" style={styles.stampBtn} onClick={generateInvite} disabled={inviteBusy}>
